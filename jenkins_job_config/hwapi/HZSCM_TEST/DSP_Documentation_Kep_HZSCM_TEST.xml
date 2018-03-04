@@ -1,0 +1,143 @@
+<project>
+  <actions />
+  <description>&lt;h2&gt;&lt;a href="http://10.140.19.16/dsphwapidoc_kep/index.html"&gt;DSPHWAPI KEPLER IFS&lt;/a&gt; - Use the link to access the documentation directly&lt;/h2&gt;
+
+&lt;iframe src="http://10.140.19.16/dsphwapidoc_kep/index.html" height=800 width=1200 seamless="seamless" frameborder=0 marginwidth=0 marginheight=0 scrolling="no"&gt;
+Bad browser, go home.
+&lt;/iframe&gt;
+</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>20</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>10</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    <com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty plugin="build-failure-analyzer@1.15.0">
+      <doNotScan>false</doNotScan>
+    </com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty>
+    <com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty plugin="naginator@1.17.1">
+      <optOut>false</optOut>
+    </com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+  </properties>
+  <scm class="hudson.scm.NullSCM" />
+  <assignedNode>HWAPI_Linsee_Build_Hzling45</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers />
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>rm -rf trunk
+
+# svn export --username=ps_rel_ci --password=df116d19 --non-interactive --trust-server-cert https://svne1.access.nsn.com/isource/svnroot/BTS_SC_DSPHWAPI/HZSCM_TEST/trunk trunk
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert https://svne1.access.nsn.com/isource/svnroot/LRC_SC_UPHWAPI/HZSCM_TEST/trunk trunk
+cd trunk
+
+python ECL.py --define ECL_PS_ENV,ECL_CCS,ECL_GLOBAL_ENV,ECL_IFCCS
+
+doxygen Doxyfile_Kepler  2&gt;&amp;1 | tee ../doxygen.log
+echo '&lt;head&gt; &lt;meta http-equiv="refresh" content="1; URL=html/index.html"&gt; &lt;/head&gt; &lt;body&gt; &lt;p&gt;You will be redirected automatically, otherwise please &lt;a href="html/index.html"&gt;click here&lt;/a&gt;.&lt;/p&gt; &lt;/body&gt;' &gt; PS_DSPHWAPI_IFS/DSPHWAPI_Interface_Specification_for_Kepler.html 
+
+zip -q -r -9 ../ps_dspswapi_kep_ifs.zip PS_DSPHWAPI_IFS/html/ PS_DSPHWAPI_IFS/DSPHWAPI_Interface_Specification_for_Kepler.html
+
+# Remove earlier public version
+# ssh root@oupsswv01 "rm -rf /var/www/html/dsphwapidoc_kep/*"
+ssh root@10.140.19.16 "rm -rf /var/www/html/dsphwapidoc_kep/*"
+
+#Lets make it public                                                                                                                                          
+# rsync -az --delete-after ./PS_DSPHWAPI_IFS/html/* root@oupsswv01:/var/www/html/dsphwapidoc_kep/
+rsync -az --delete-after ./PS_DSPHWAPI_IFS/html/* root@10.140.19.16:/var/www/html/dsphwapidoc_kep/
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.plugins.warnings.WarningsPublisher plugin="warnings@4.56">
+      <healthy />
+      <unHealthy />
+      <thresholdLimit>low</thresholdLimit>
+      <pluginName>[WARNINGS] </pluginName>
+      <defaultEncoding />
+      <canRunOnFailed>false</canRunOnFailed>
+      <usePreviousBuildAsReference>false</usePreviousBuildAsReference>
+      <useStableBuildAsReference>false</useStableBuildAsReference>
+      <useDeltaValues>false</useDeltaValues>
+      <thresholds plugin="analysis-core@1.78">
+        <unstableTotalAll />
+        <unstableTotalHigh />
+        <unstableTotalNormal />
+        <unstableTotalLow />
+        <unstableNewAll />
+        <unstableNewHigh />
+        <unstableNewNormal />
+        <unstableNewLow />
+        <failedTotalAll />
+        <failedTotalHigh />
+        <failedTotalNormal />
+        <failedTotalLow />
+        <failedNewAll />
+        <failedNewHigh />
+        <failedNewNormal />
+        <failedNewLow />
+      </thresholds>
+      <shouldDetectModules>false</shouldDetectModules>
+      <dontComputeNew>true</dontComputeNew>
+      <doNotResolveRelativePaths>true</doNotResolveRelativePaths>
+      <includePattern />
+      <excludePattern />
+      <messagesPattern />
+      <parserConfigurations>
+        <hudson.plugins.warnings.ParserConfiguration>
+          <pattern>doxygen.log</pattern>
+          <parserName>Doxygen</parserName>
+        </hudson.plugins.warnings.ParserConfiguration>
+      </parserConfigurations>
+      <consoleParsers />
+    </hudson.plugins.warnings.WarningsPublisher>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>ps_dspswapi_kep_ifs.zip</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>true</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.Mailer plugin="mailer@1.17">
+      <recipients>${DSP_DOCUMENT_FOLLOWERS}</recipients>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>true</sendToIndividuals>
+    </hudson.tasks.Mailer>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.29">
+      <patterns>
+        <hudson.plugins.ws__cleanup.Pattern>
+          <pattern>I_Interface</pattern>
+          <type>INCLUDE</type>
+        </hudson.plugins.ws__cleanup.Pattern>
+        <hudson.plugins.ws__cleanup.Pattern>
+          <pattern>PS_DSPHWAPI_IFS</pattern>
+          <type>INCLUDE</type>
+        </hudson.plugins.ws__cleanup.Pattern>
+        <hudson.plugins.ws__cleanup.Pattern>
+          <pattern>ps_dspswapi_ifs.zip</pattern>
+          <type>INCLUDE</type>
+        </hudson.plugins.ws__cleanup.Pattern>
+      </patterns>
+      <deleteDirs>true</deleteDirs>
+      <cleanupParameter />
+      <externalDelete />
+    </hudson.plugins.ws__cleanup.PreBuildCleanup>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.3" />
+  </buildWrappers>
+</project>

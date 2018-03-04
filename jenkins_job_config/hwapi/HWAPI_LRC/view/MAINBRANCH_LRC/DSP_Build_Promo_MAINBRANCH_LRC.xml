@@ -1,0 +1,347 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>&lt;br&gt; Job is tracking changes from &lt;font color=&quot;red&quot;&gt;&lt;b&gt; /LRC_SC_UPHWAPI/trunk &lt;/b&gt;&lt;/font&gt;&lt;br&gt;</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>5</daysToKeep>
+        <numToKeep>20</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28"/>
+    <com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty plugin="build-failure-analyzer@1.15.0">
+      <doNotScan>false</doNotScan>
+    </com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty>
+    <com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty plugin="naginator@1.17.1">
+      <optOut>false</optOut>
+    </com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.BooleanParameterDefinition>
+          <name>FORCED_BUILD</name>
+          <description>Default value false means that only basic building is executed always and additional klockwork building and all tests are run only when changed files are detected.
+true value means that everything is always executed.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+      <maxConcurrentPerNode>0</maxConcurrentPerNode>
+      <maxConcurrentTotal>0</maxConcurrentTotal>
+      <categories class="java.util.concurrent.CopyOnWriteArrayList"/>
+      <throttleEnabled>false</throttleEnabled>
+      <throttleOption>project</throttleOption>
+      <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+      <paramsToUseForLimit></paramsToUseForLimit>
+    </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+  </properties>
+  <scm class="hudson.scm.SubversionSCM" plugin="subversion@2.5.7">
+    <locations>
+      <hudson.scm.SubversionSCM_-ModuleLocation>
+        <remote>https://svne1.access.nsn.com/isource/svnroot/LRC_SC_UPHWAPI/MAINBRANCH_LRC/trunk</remote>
+        <credentialsId>b7d115d7-99c9-451a-88f3-892e6c3cd444</credentialsId>
+        <local>DSP_trunk</local>
+        <depthOption>empty</depthOption>
+        <ignoreExternalsOption>true</ignoreExternalsOption>
+      </hudson.scm.SubversionSCM_-ModuleLocation>
+    </locations>
+    <excludedRegions></excludedRegions>
+    <includedRegions></includedRegions>
+    <excludedUsers></excludedUsers>
+    <excludedRevprop></excludedRevprop>
+    <excludedCommitMessages></excludedCommitMessages>
+    <workspaceUpdater class="hudson.scm.subversion.UpdateUpdater"/>
+    <ignoreDirPropChanges>false</ignoreDirPropChanges>
+    <filterChangelog>false</filterChangelog>
+  </scm>
+  <assignedNode>build</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <hudson.triggers.SCMTrigger>
+      <spec>* * * * *</spec>
+      <ignorePostCommitHooks>false</ignorePostCommitHooks>
+    </hudson.triggers.SCMTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+export BRANCH=MAINBRANCH_LRC
+
+bash /home/ca_pscilrc/scirtem_test/project_DSP_Build_Promo.sh
+#$HWAPI_SCRIPT_DIR/bin/project_DSP_Build_Promo.sh
+</command>
+    </hudson.tasks.Shell>
+    <hudson.plugins.parameterizedtrigger.TriggerBuilder plugin="parameterized-trigger@2.30">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+          <configs>
+            <hudson.plugins.parameterizedtrigger.FileBuildParameters>
+              <propertiesFile>param_file</propertiesFile>
+              <failTriggerOnMissing>false</failTriggerOnMissing>
+              <useMatrixChild>false</useMatrixChild>
+              <onlyExactRuns>false</onlyExactRuns>
+            </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+          </configs>
+          <projects>DSP_UnitTest_CCSRT_Valgrind_MAINBRANCH_LRC</projects>
+          <condition>ALWAYS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+          <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+        </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+        <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+          <configs>
+            <hudson.plugins.parameterizedtrigger.FileBuildParameters>
+              <propertiesFile>param_file</propertiesFile>
+              <failTriggerOnMissing>false</failTriggerOnMissing>
+              <useMatrixChild>false</useMatrixChild>
+              <onlyExactRuns>false</onlyExactRuns>
+            </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+          </configs>
+          <projects>DSP_Build_Kep_LRC_MAINBRANCH_LRC,DSP_Build_RT_MAINBRANCH_LRC,DSP_Documentation_Kep_MAINBRANCH_LRC,DSP_Documentation_KepArm_MAINBRANCH_LRC</projects>
+          <condition>ALWAYS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+          <block>
+            <buildStepFailureThreshold>
+              <name>UNSTABLE</name>
+              <ordinal>1</ordinal>
+              <color>YELLOW</color>
+              <completeBuild>true</completeBuild>
+            </buildStepFailureThreshold>
+            <failureThreshold>
+              <name>UNSTABLE</name>
+              <ordinal>1</ordinal>
+              <color>YELLOW</color>
+              <completeBuild>true</completeBuild>
+            </failureThreshold>
+          </block>
+          <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+        </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.TriggerBuilder>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+#Get data from mainbranch dsp promo
+wget -q ${BUILD_URL}/api/xml?tree=actions[triggeredBuilds[url]] -O subjobs.xml
+
+for subjob in $(cat subjobs.xml | xmllint --format - | sed -n &quot;s#.*&lt;url&gt;\(.*\)&lt;/url&gt;#\1#p&quot;); 
+do
+  subjobname=$(echo $subjob | sed &quot;s#.*job/\(.*\)/.*/#\1#&quot;)
+  wget -q ${subjob}/api/xml/?tree=duration -O ${subjobname}.xml
+  
+  duration=$(cat ${subjobname}.xml | xmllint --format - | sed -n &quot;s#.*duration&gt;\(.*\)&lt;/duration.*#scale=2;\1 / 60000#p&quot; | bc -l )
+  line1=&quot;${line1}${subjobname}, &quot;
+  line2=&quot;${line2}${duration}, &quot;
+done
+echo $line1 &gt; plot.csv
+echo $line2 &gt;&gt; plot.csv</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+#Check if job state is changed FAILURE to SUCCESS trigger ECL_DSP_Update job, as it is blocked because of failed promo job.
+#If job is in shis step everything should be fine. Check if last build was failure
+PREVIOUS_BUILD_NUMBER=$((BUILD_NUMBER-1))
+previous_build_status=$(wget -q ${JOB_URL}/${PREVIOUS_BUILD_NUMBER}/api/json?tree=result -O - |  sed &quot;s#.*:.\(.*\).}#\1#&quot;)
+
+if [ &quot;${previous_build_status}&quot; == &quot;FAILURE&quot; ]; then
+  echo &quot;Last build was failure, and now it looks everything is going well, so trigger ECL_DSP_Update_MAINBRANCH_LRC&quot;
+  echo &quot;just in case if it was blocked because of failed promo job&quot;
+  wget ${JENKINS_URL}/job/ECL_DSP_Update_MAINBRANCH_LRC/buildWithParameters?token=restart&amp;delay=30sec
+  if [ &quot;$?&quot; != &quot;0&quot; ];then 
+    echo &quot;Restart not work!!!&quot;
+  fi
+fi
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>DSP_trunk/ECL/ECL, MAINBRANCH_LRC_dsp_revision_info.txt, DSP_build_number.txt, changelog.xml, used_revisions.txt, UT_findings.txt, all_postings.log</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>true</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.plugins.plot.PlotPublisher plugin="plot@1.9">
+      <plots>
+        <hudson.plugins.plot.Plot>
+          <title>Duration</title>
+          <yaxis>Min</yaxis>
+          <series>
+            <hudson.plugins.plot.CSVSeries>
+              <file>plot.csv</file>
+              <label></label>
+              <fileType>csv</fileType>
+              <inclusionFlag>OFF</inclusionFlag>
+              <exclusionValues></exclusionValues>
+              <url></url>
+              <displayTableFlag>true</displayTableFlag>
+            </hudson.plugins.plot.CSVSeries>
+          </series>
+          <group>Subjobs</group>
+          <numBuilds></numBuilds>
+          <csvFileName>943010580.csv</csvFileName>
+          <csvLastModification>0</csvLastModification>
+          <style>line</style>
+          <useDescr>false</useDescr>
+          <keepRecords>false</keepRecords>
+          <exclZero>false</exclZero>
+          <logarithmic>false</logarithmic>
+        </hudson.plugins.plot.Plot>
+      </plots>
+    </hudson.plugins.plot.PlotPublisher>
+    <hudson.plugins.postbuildtask.PostbuildTask plugin="postbuild-task@1.8">
+      <tasks>
+        <hudson.plugins.postbuildtask.TaskProperties>
+          <logTexts>
+            <hudson.plugins.postbuildtask.LogProperties>
+              <logText>1</logText>
+              <operator>OR</operator>
+            </hudson.plugins.postbuildtask.LogProperties>
+            <hudson.plugins.postbuildtask.LogProperties>
+              <logText>a</logText>
+              <operator>AND</operator>
+            </hudson.plugins.postbuildtask.LogProperties>
+          </logTexts>
+          <EscalateStatus>false</EscalateStatus>
+          <RunIfJobSuccessful>false</RunIfJobSuccessful>
+          <script>#!/bin/bash&#xd;
+$HWAPI_SCRIPT_DIR/bin/project_Run_Posting_Script.sh  $JOB_NAME PS_DSPHWAPI build</script>
+        </hudson.plugins.postbuildtask.TaskProperties>
+      </tasks>
+    </hudson.plugins.postbuildtask.PostbuildTask>
+    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.30">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+          <configs>
+            <hudson.plugins.parameterizedtrigger.FileBuildParameters>
+              <propertiesFile>param_file</propertiesFile>
+              <failTriggerOnMissing>false</failTriggerOnMissing>
+              <useMatrixChild>false</useMatrixChild>
+              <onlyExactRuns>false</onlyExactRuns>
+            </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+          </configs>
+          <projects>DSP_Build_Store_Libraries_MAINBRANCH_LRC</projects>
+          <condition>SUCCESS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+        </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.BuildTrigger>
+    <hudson.tasks.Fingerprinter>
+      <targets> MAINBRANCH_LRC_dsp_revision_info.txt</targets>
+    </hudson.tasks.Fingerprinter>
+    <hudson.plugins.descriptionsetter.DescriptionSetterPublisher plugin="description-setter@1.10">
+      <regexp>^Description: (.*)</regexp>
+      <regexpForFailed></regexpForFailed>
+      <setForMatrix>false</setForMatrix>
+    </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
+    <hudson.plugins.claim.ClaimPublisher plugin="claim@2.8"/>
+    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.44">
+      <recipientList>$DEFAULT_RECIPIENTS,I_EXT_MBB_SM_PS_UPHWAPI_HZ_GMS@internal.nsn.com</recipientList>
+      <configuredTriggers>
+        <hudson.plugins.emailext.plugins.trigger.AbortedTrigger>
+          <email>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <recipientProviders>
+              <hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider/>
+              <hudson.plugins.emailext.plugins.recipients.CulpritsRecipientProvider/>
+              <hudson.plugins.emailext.plugins.recipients.ListRecipientProvider/>
+            </recipientProviders>
+            <attachmentsPattern></attachmentsPattern>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.AbortedTrigger>
+        <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+          <email>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <recipientProviders>
+              <hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider/>
+              <hudson.plugins.emailext.plugins.recipients.CulpritsRecipientProvider/>
+              <hudson.plugins.emailext.plugins.recipients.ListRecipientProvider/>
+            </recipientProviders>
+            <attachmentsPattern></attachmentsPattern>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+        <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+          <email>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <recipientProviders>
+              <hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider/>
+              <hudson.plugins.emailext.plugins.recipients.CulpritsRecipientProvider/>
+              <hudson.plugins.emailext.plugins.recipients.ListRecipientProvider/>
+            </recipientProviders>
+            <attachmentsPattern></attachmentsPattern>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+        <hudson.plugins.emailext.plugins.trigger.UnstableTrigger>
+          <email>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <recipientProviders>
+              <hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider/>
+              <hudson.plugins.emailext.plugins.recipients.CulpritsRecipientProvider/>
+              <hudson.plugins.emailext.plugins.recipients.ListRecipientProvider/>
+            </recipientProviders>
+            <attachmentsPattern></attachmentsPattern>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.UnstableTrigger>
+      </configuredTriggers>
+      <contentType>text/html</contentType>
+      <defaultSubject>$DEFAULT_SUBJECT</defaultSubject>
+      <defaultContent>${SCRIPT, template=&quot;build-promo-html.template&quot;}</defaultContent>
+      <attachmentsPattern>MAINBRANCH_LRC_dsp_revision_info.txt	</attachmentsPattern>
+      <presendScript></presendScript>
+      <postsendScript></postsendScript>
+      <attachBuildLog>false</attachBuildLog>
+      <compressBuildLog>false</compressBuildLog>
+      <replyTo>$DEFAULT_REPLYTO</replyTo>
+      <saveOutput>false</saveOutput>
+      <disabled>true</disabled>
+    </hudson.plugins.emailext.ExtendedEmailPublisher>
+    <com.chikli.hudson.plugin.naginator.NaginatorPublisher plugin="naginator@1.17.1">
+      <regexpForRerun></regexpForRerun>
+      <rerunIfUnstable>true</rerunIfUnstable>
+      <rerunMatrixPart>false</rerunMatrixPart>
+      <checkRegexp>false</checkRegexp>
+      <regexpForMatrixStrategy>TestParent</regexpForMatrixStrategy>
+      <delay class="com.chikli.hudson.plugin.naginator.FixedDelay">
+        <delay>60</delay>
+      </delay>
+      <maxSchedule>1</maxSchedule>
+    </com.chikli.hudson.plugin.naginator.NaginatorPublisher>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.3"/>
+  </buildWrappers>
+</project>

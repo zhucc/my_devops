@@ -1,0 +1,551 @@
+<matrix-project plugin="matrix-project@1.11">
+  <actions />
+  <description>&lt;b&gt;Links:&lt;/b&gt;&lt;br&gt;
+&lt;a href="http://psci.emea.nsn-net.net:8080/job/PS_StartupTest_LRC_FBLRC1613/"&gt;PS_StartupTest_LRC_FBLRC1613&lt;/a&gt;
+&lt;br&gt;&lt;br&gt;
+28.12.2015: HDBDE_FULL_SCT_03 added again.&lt;br&gt;
+23.12.2015: HDBDE_FULL_SCT_03 removed because logger PC (192.168.255.87) seems to be broken.&lt;br&gt;
+22.12.2015: HDBDE_FULL_SCT_02, HDBDE_FULL_SCT_03 added. Purpose is to distribute test cases evenly and shorten testing time.
+
+</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.security.AuthorizationMatrixProperty>
+      <permission>hudson.scm.SCM.Tag:visjokel</permission>
+      <permission>hudson.scm.SCM.Tag:grzhao</permission>
+      <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Delete:visjokel</permission>
+      <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Delete:grzhao</permission>
+      <permission>hudson.model.Item.Read:visjokel</permission>
+      <permission>hudson.model.Item.Read:grzhao</permission>
+      <permission>com.cloudbees.plugins.credentials.CredentialsProvider.ManageDomains:visjokel</permission>
+      <permission>com.cloudbees.plugins.credentials.CredentialsProvider.ManageDomains:grzhao</permission>
+      <permission>hudson.model.Item.Move:grzhao</permission>
+      <permission>hudson.model.Item.ExtendedRead:visjokel</permission>
+      <permission>hudson.model.Item.ExtendedRead:grzhao</permission>
+      <permission>hudson.plugins.promoted_builds.Promotion.Promote:visjokel</permission>
+      <permission>hudson.plugins.promoted_builds.Promotion.Promote:grzhao</permission>
+      <permission>hudson.model.Item.Workspace:visjokel</permission>
+      <permission>hudson.model.Item.Workspace:grzhao</permission>
+      <permission>hudson.model.Item.Configure:visjokel</permission>
+      <permission>hudson.model.Item.Configure:grzhao</permission>
+      <permission>hudson.model.Item.Configure:tevuoti</permission>
+      <permission>hudson.model.Run.Delete:visjokel</permission>
+      <permission>hudson.model.Run.Delete:grzhao</permission>
+      <permission>hudson.model.Item.Discover:visjokel</permission>
+      <permission>hudson.model.Item.Discover:grzhao</permission>
+      <permission>com.cloudbees.plugins.credentials.CredentialsProvider.View:visjokel</permission>
+      <permission>com.cloudbees.plugins.credentials.CredentialsProvider.View:grzhao</permission>
+      <permission>hudson.model.Item.Build:erkkila</permission>
+      <permission>hudson.model.Item.Build:visjokel</permission>
+      <permission>hudson.model.Item.Build:grzhao</permission>
+      <permission>hudson.model.Item.Cancel:visjokel</permission>
+      <permission>hudson.model.Item.Cancel:grzhao</permission>
+      <permission>hudson.model.Item.Cancel:tevuoti</permission>
+      <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Create:visjokel</permission>
+      <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Create:grzhao</permission>
+      <permission>hudson.model.Item.Delete:visjokel</permission>
+      <permission>hudson.model.Item.Delete:grzhao</permission>
+      <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Update:visjokel</permission>
+      <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Update:grzhao</permission>
+      <permission>hudson.model.Run.Update:visjokel</permission>
+      <permission>hudson.model.Run.Update:grzhao</permission>
+    </hudson.security.AuthorizationMatrixProperty>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>30</daysToKeep>
+        <numToKeep>20</numToKeep>
+        <artifactDaysToKeep>7</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    <com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty plugin="build-failure-analyzer@1.15.0">
+      <doNotScan>false</doNotScan>
+    </com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty>
+    <com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty plugin="naginator@1.17.1">
+      <optOut>false</optOut>
+    </com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>ECL_REVISION</name>
+          <description />
+          <defaultValue />
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>TEST_SUITE_REVISION</name>
+          <description />
+          <defaultValue />
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>MIT_REVISION</name>
+          <description />
+          <defaultValue />
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>ROBOT_FRAMEWORK_REVISION</name>
+          <description />
+          <defaultValue>HEAD</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>branch</name>
+          <description />
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>FBLRC1613</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>USE_PROBLEM_DB</name>
+          <description />
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>CODE_COVERAGE</name>
+          <description />
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>TESTBINARY</name>
+          <description>Test binary filesystem location http://psci.emea.nsn-net.net:8080/job/MCU_Build_Rel3_CTC_FBLRC1613/ws/MCU_trunk/filesystem.tgz</description>
+          <defaultValue>http://10.140.19.16:8080//job/MCU_Build_Rel3_CTC_FBLRC1613/ws/MCU_trunk/filesystem.tgz</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>TEST_BIN</name>
+          <description />
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>PARENT_PROJECT</name>
+          <description />
+          <defaultValue />
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+      <maxConcurrentPerNode>0</maxConcurrentPerNode>
+      <maxConcurrentTotal>0</maxConcurrentTotal>
+      <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+      <throttleEnabled>false</throttleEnabled>
+      <throttleOption>project</throttleOption>
+      <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+      <matrixOptions>
+        <throttleMatrixBuilds>true</throttleMatrixBuilds>
+        <throttleMatrixConfigurations>false</throttleMatrixConfigurations>
+      </matrixOptions>
+      <paramsToUseForLimit />
+      <configVersion>1</configVersion>
+    </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+  </properties>
+  <scm class="hudson.scm.CustomSCM" plugin="customSCM@0.7.6">
+    <checkoutCommand>/build/home/ca_pscilrc/scripts/customscm-changelog.sh</checkoutCommand>
+    <calcRevisionCommand />
+    <compareRevisionCommand />
+    <repoBrowserURL />
+  </scm>
+  <assignedNode>build</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers />
+  <concurrentBuild>true</concurrentBuild>
+  <axes>
+    <hudson.matrix.LabelAxis>
+      <name>label</name>
+      <values>
+        <string>HDBDE_FULL_SCT_01</string>
+        <string>HDBDE_FULL_SCT_02</string>
+        <string>HDBDE_FULL_SCT_03</string>
+        <string>HDBDE_FULL_SCT_BBB</string>
+        <string>HDBDE_FULL_SCT_CLK_SYNC_01</string>
+      </values>
+    </hudson.matrix.LabelAxis>
+  </axes>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>test_env=$label
+date
+mkdir ECL
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert --force https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/ECL/FBLRC1613/ECL_HWAPI/ECL@$ECL_REVISION ECL/ECL &gt;&gt; svn_log.txt
+svn info --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/ECL/FBLRC1613/ECL_HWAPI -r $ECL_REVISION | egrep -v 'Repo|Revi|Text Last|Path' &gt; ECL_revision_info.txt</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert --force https://svne1.access.nsn.com/isource/svnroot/BTS_T_PS_TOOLS/CiTools/upload_lrc.sh &gt;&gt; svn_log.txt
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert --force https://svne1.access.nsn.com/isource/svnroot/BTS_T_PS_TOOLS/CiTools/CI_SCT_SUITES/DefaultInit.txt &gt;&gt; svn_log.txt
+
+test_env=$label
+echo "current label is $label"
+# use the JuMa's pimped ReserveIt instead of the SVN version
+#svn export https://svne1.access.nsn.com/isource/svnroot/BTS_T_PS_TOOLS/ReserveItPy/trunk/ ReserveIt
+#ln -s /home/psci/ReserveIt ReserveIt
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert https://svne1.access.nsn.com/isource/svnroot/BTS_T_PS_TOOLS/ReserveItPy/trunk/ ReserveIt &gt;&gt; svn_log.txt
+
+svn co --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert --depth empty https://svne1.access.nsn.com/isource/svnroot/BTS_T_PS_TOOLS/CiTools/CI_SCT_SUITES/${branch} &gt;&gt; svn_log.txt
+
+svn up --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert ${branch}/${test_env}
+svn up --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert ${branch}/Problem.db
+svn co --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert https://svne1.access.nsn.com/isource/svnroot/BTS_T_PS_TOOLS/CiTools/CI_SCT_SUITES/test_env &gt;&gt; svn_log.txt
+
+mcuhwapi=($(sed -n 's/ECL_MCUHWAPI=\(.*\)\@\([0-9]*\)/\1 \2/p' ECL/ECL))
+
+for revision in TEST_SUITE_REVISION MIT_REVISION ROBOT_REVISION
+do
+    echo "$revision: ${!revision}"
+    if [ -z ${!revision} ];then
+	eval "${revision}=${mcuhwapi[1]}"
+    fi
+done
+
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert --force https://svne1.access.nsn.com${mcuhwapi[0]}/HWR/Sct@${TEST_SUITE_REVISION} Sct &gt;&gt; svn_log.txt
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert --force https://svne1.access.nsn.com${mcuhwapi[0]}/HWR/Mit@${MIT_REVISION} Mit &gt;&gt; svn_log.txt
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert --force https://svne1.access.nsn.com${mcuhwapi[0]}/Tools/Linux/bin/robotframework-2.7.2/@${ROBOT_FRAMEWORK_REVISION} Robot &gt;&gt; svn_log.txt
+
+#ln -sf ${WORKSPACE}/test_env/$test_env.py ${branch}/$test_env/common/TARGET_ENV.py
+###add by Grace###
+
+if [[ $test_env == HDBDE_FULL_SCT_02 || $test_env == HDBDE_FULL_SCT_03 ]] ;then
+     envNum=${test_env##*_}
+ 
+     ln -sf ${WORKSPACE}/test_env/HDBDE_FULL_SCT_HZ_$envNum.py ${branch}/$test_env/common/TARGET_ENV.py
+     ln -sf ${WORKSPACE}/test_env/HDBDE_FULL_SCT_HZ_$envNum.py Sct/common/TARGET_ENV.py
+else
+     ln -sf ${WORKSPACE}/test_env/$test_env.py ${branch}/$test_env/common/TARGET_ENV.py
+     ln -sf ${WORKSPACE}/test_env/$test_env.py Sct/common/TARGET_ENV.py
+fi
+###end     
+
+
+ln -s ${WORKSPACE}/${branch}/$test_env/15__State_Transitions/Variables_TARGET_ENV.py Sct/suites/15__State_Transitions/Variables_TARGET_ENV.py
+
+[[ ! -e /build/home/ca_pscilrc/PS_CI_LIBS/MCUHWAPI/MCU_TEST_${mcuhwapi[1]}.zip ]] &amp;&amp; echo "MCU_TEST_${mcuhwapi[1]}.zip not found" &amp;&amp; exit
+
+#wget http://psci.emea.nsn-net.net:8080/job/MCU_Build_Rel3_FBLRC1613/ws//artifacts.zip
+unzip /build/home/ca_pscilrc/PS_CI_LIBS/MCUHWAPI/MCU_TEST_${mcuhwapi[1]}.zip *.py
+
+mkdir -p $WORKSPACE/Tbts
+unzip -j /build/home/ca_pscilrc/PS_CI_LIBS/MCUHWAPI/MCU_TEST_${mcuhwapi[1]}.zip C_Platform/MCUHWAPI/Exe/LINUX_OCTEON2/LCP_SHP/TbtsExe -d $WORKSPACE/Tbts
+</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>echo "properties = { 'server_ip_address':'10.140.19.16'," &gt; ReserveIt/Properties.py
+echo "               'server_port':'59108'," &gt;&gt; ReserveIt/Properties.py
+echo "               'own_name':'CI_${branch}'," &gt;&gt; ReserveIt/Properties.py
+echo "               'subnet':'192.168.255'}" &gt;&gt; ReserveIt/Properties.py
+</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>test_env=$label
+echo "Starting Serial Port loggers"
+#console 1 -p 3109 -M 192.168.255.87 &gt; LCP_SHP_console1.log &amp;
+#console 2 -p 3109 -M 192.168.255.87 &gt; LCP_AHP_console2.log &amp;
+#console 5 -p 3109 -M 192.168.255.87 &gt; LSP_K2_console5.log &amp;
+#console 6 -p 3109 -M 192.168.255.87 &gt; LSP_AXM_console6.log &amp;
+#console 7 -p 3109 -M 192.168.255.87 &gt; LSP_K2_console7.log &amp;
+#console 8 -p 3109 -M 192.168.255.87 &gt; LSP_K2_console8.log &amp;
+
+if [[ ${test_env} == "HDBDE_FULL_SCT_02" || ${test_env} == "HDBDE_FULL_SCT_01" ]]; then
+     echo "there will be no console_log in the artifact."
+fi</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>test_env=$label
+if [ ${CODE_COVERAGE} == true ]; then
+  wget http://10.140.19.16:8080/job/${PARENT_PROJECT}/ws/MCU_trunk/exe/LINUX_OCTEON2/LCP_SHP/LCP____SF_E0000.FEP
+  wget http://10.140.19.16:8080/job/${PARENT_PROJECT}/ws/MCU_trunk/exe/LINUX_OCTEON2/LCP_AHP/LCP____AO_E0000.FEP
+  wget http://10.140.19.16:8080/job/${PARENT_PROJECT}/ws/NSN-LSP-OS
+  wget http://10.140.19.16:8080/job/${PARENT_PROJECT}/ws/NSN-LTE-DSP
+  extra="-e cp:LCP____SF_E0000.FEP:lrc/fep/LCP____SF_E0000.FEP -e cp:LCP____AO_E0000.FEP:lrc/fep/LCP____AO_E0000.FEP -e cp:NSN-LSP-OS:lsp-fep/4/NSN-LSP-OS -e cp:NSN-LTE-DSP:lsp-fep/4/NSN-LTE-DSP -a python -F y"
+fi
+
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert --force https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/branches/ps_rel_ci/jenkins/scripts_lrc/update_sw_mcu_lrc.sh &gt;&gt; svn_log.txt
+chmod +x update_sw_mcu_lrc.sh
+
+if [ ${TEST_BIN} == true ]; then
+  wget ${TESTBINARY} -O testbin.tgz
+  tar -xzf testbin.tgz
+  ./upload_lrc.sh -l
+  ./update_sw_mcu_lrc.sh ${WORKSPACE} ${branch} ${test_env} TESTBIN -T ECL ${extra} ; sw_update_result=$?
+  echo "SW Update Result: $sw_update_result"
+
+else
+  echo "upload sw TBD"
+  ./update_sw_mcu_lrc.sh ${WORKSPACE} ${branch} ${test_env} ${ECL_REVISION} -T ECL ${extra} ; sw_update_result=$?
+  echo "SW Update Result: $sw_update_result"
+fi
+
+### check if update_sw_mcu_lrc.sh script failed
+if [ "$sw_update_result" -gt 0 ]; then
+  echo "fail" &gt; sw_update_result.txt
+fi</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>test_env=$label
+buildfolder=$(ls MCU_trunk/ | head -n 1 | sed -n 's/build_//p')
+export PYTHONPATH=Robot/lib/python2.6/site-packages:Sct:Mit/scripts:ReserveIt:${branch}/$test_env:Sct:MCU_trunk/build_$buildfolder/python/iface:MCU_trunk/build_rel3/common_tests/python
+
+python --version
+
+if [ ${CODE_COVERAGE} == true ]; then
+   params="$params -v COVERAGE:CTC"
+fi
+
+date
+sleep 10
+
+# power down target in suite tear down
+params="$params -v POWER_DOWN_TARGET:NO"
+
+#Robot/bin/pybot -n exclude-test -e ignore-test --listener keywords.UdpListener.UdpListener:start="SUITE",level=FAIL --listener keywords.TestCaseListener.TestCaseListener --runemptysuite --nostatusrc --output output.xml --log NONE --report NONE $params -v RESET_DELAY:2 ${branch}/$test_env
+
+#commented for testing report writing without ReportWriter.py
+#Robot/bin/pybot --removekeywords all -n exclude-test -e ignore-test --listener keywords.UdpListener.UdpListener:start="SUITE",level=FAIL,server=localhost,port=51000 --runemptysuite --nostatusrc --output output.xml --log NONE --report NONE $params -v RESET_DELAY=5 ${branch}/$test_env
+
+# lrc
+#Robot/bin/pybot --removekeywords all -n exclude-test -e ignore-test --listener keywords.TestCaseListener.TestCaseListener --runemptysuite --nostatusrc --output output.xml $params -v RESET_DELAY=5 ${branch}/$test_env
+
+# from rel3 job
+Robot/bin/pybot --removekeywords all -n exclude-test -e ignore-test --listener keywords.UdpListener.UdpListener:start="TargetConnection.Power Up Target",level=FAIL --listener keywords.TestCaseListener.TestCaseListener --runemptysuite --nostatusrc --output output.xml --log NONE --report NONE $params -v RESET_DELAY:5 ${branch}/$test_env</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+test_env=$label
+#for testing
+export USE_PROBLEM_DB=true
+date
+if [ ${USE_PROBLEM_DB} == true ]; then
+#  Robot/bin/ReportWriter ${branch}/Problem.db Problems output.xml ${branch} ${test_env} $ECL_REVISION
+#  sed -i '/^.*&lt;msg.*&gt;.*&lt;\/msg&gt;/d' output.xml
+#  sed -i '/^.*&lt;msg.*&gt;.*/,/^.*&lt;\/msg&gt;/d' output.xml
+  Robot/bin/ReportWriter  -d ${branch}/Problem.db -b ${branch} -e $test_env -x -r $ECL_REVISION output.xml ; test_result=$?
+     
+else
+  export PYTHONPATH=Robot/lib/python2.6/site-packages:Sct:Mit/scripts:ReserveIt:${branch}/$test_env
+  Robot/bin/rebot --processemptysuite -n non-critical --exclude exclude-test --output ${branch}_${test_env}_output.xml --log ${branch}_${test_env}_log.html --report ${branch}_${test_env}_report.html --xunitfile ${branch}_${test_env}_xunitlog.xml --logtitle HWAPI_System_Component_Tests_Log --reporttitle HWAPI_System_Component_Tests_Report_for_${branch}_${test_env}_trunk@$ECL_REVISION output.xml ; test_result=$?
+fi
+
+echo "ROBOT STATUS:$test_result"</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+date
+rm -f aaerror.log
+touch aaerror.log
+for udp in UDP_*.log
+do 
+  if [ -e $udp ]; then
+    echo $udp &gt;&gt; aaerror.log
+    sed -n '/.*ERR\/CCS\/AaError.*/p' $udp &gt;&gt; aaerror.log
+  fi
+done
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.plugins.robot.RobotPublisher plugin="robot@1.6.4">
+      <outputPath>.</outputPath>
+      <reportFileName>*_report.html	</reportFileName>
+      <logFileName>*_log.html</logFileName>
+      <outputFileName>*_output.xml</outputFileName>
+      <disableArchiveOutput>false</disableArchiveOutput>
+      <passThreshold>100.0</passThreshold>
+      <unstableThreshold>0.0</unstableThreshold>
+      <otherFiles>
+        <string />
+      </otherFiles>
+      <enableCache>true</enableCache>
+      <onlyCritical>true</onlyCritical>
+    </hudson.plugins.robot.RobotPublisher>
+    <hudson.tasks.test.AggregatedTestResultPublisher plugin="junit@1.21">
+      <includeFailedBuilds>false</includeFailedBuilds>
+    </hudson.tasks.test.AggregatedTestResultPublisher>
+    <hudson.plugins.postbuildtask.PostbuildTask plugin="postbuild-task@1.8">
+      <tasks>
+        <hudson.plugins.postbuildtask.TaskProperties>
+          <logTexts>
+            <hudson.plugins.postbuildtask.LogProperties>
+              <logText />
+              <operator>AND</operator>
+            </hudson.plugins.postbuildtask.LogProperties>
+          </logTexts>
+          <EscalateStatus>false</EscalateStatus>
+          <RunIfJobSuccessful>false</RunIfJobSuccessful>
+          <script>#!/bin/bash
+set -x
+test_env=$label
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/branches/ps_rel_ci/jenkins/scripts_lrc/fetch_lrc_logs.sh
+if [[ ${test_env} == "HDBDE_FULL_SCT_03" ]]; then
+    ./fetch_lrc_logs.sh 192.168.255.1 192.168.255.2
+else
+    ./fetch_lrc_logs.sh 192.168.255.1 192.168.255.2
+fi
+tar cz unit_logs/ -f unit_logs.tgz
+rm -rf unit_logs/
+
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/branches/ps_rel_ci/jenkins/scripts_lrc/run_testcleanup_lrc.sh
+chmod 777 run_testcleanup_lrc.sh
+./run_testcleanup_lrc.sh -p LRC -t ${TARGET_NAME} -s Off -r CI_${branch}
+rm *output.xml</script>
+        </hudson.plugins.postbuildtask.TaskProperties>
+      </tasks>
+    </hudson.plugins.postbuildtask.PostbuildTask>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>FBLRC1613_*,UDP*.log,plots/*, ECL_revision_info.txt,ctc_data*/*,ECL/ECL,ECL_HWAPI_FEP_*.zip,*console*.log,MCU_TEST_*.zip,aaerror.log,console_logs.tgz,unit_logs.tgz</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>true</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+    <org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder plugin="groovy-postbuild@2.3.1">
+      <script plugin="script-security@1.34">
+        <script>def env = manager.build.getBuildVariables()
+
+if ("true".equals(env.get("CODE_COVERAGE"))) {
+  manager.addShortText("CTC ",'white','black','0px','white')
+}
+manager.addShortText("ECL:"+env.get("ECL_REVISION"),'black','white','0px','white')
+
+def fail_nodes = manager.getLogMatcher(".*Failing Nodes: (.*)")
+if (fail_nodes?.matches()) {
+  manager.addShortText("Fails: "+fail_nodes.group(1),'black','white','0px','white')
+}
+
+def reserver = manager.getLogMatcher("^FatalError: (.*) is reserved by (.*)")
+if (reserver?.matches()) {
+  manager.addWarningBadge("Target Reservation failed")
+  summary = manager.createSummary("warning.gif")
+  summary.appendText("&lt;h1&gt;Target Reservation Failed!&lt;/h1&gt;", false, false, false, "red")
+  summary.appendText(reserver.group(1)+" is reserved by "+reserver.group(2), true,true,false,"black")
+  manager.build.setResult(hudson.model.Result.NOT_BUILT)
+}
+else {
+  def failure = manager.getLogMatcher("^ROBOT STATUS:([0-9]+).*")
+  if (failure?.matches() ) {
+    failures = Integer.parseInt(failure.group(1))
+    if ( failures &gt; 0 ) {
+      manager.listener.logger.println(failure.group(1)+" Critical Test(s) failed.")
+      manager.addWarningBadge("")
+      manager.addShortText(failure.group(1)+" Critical test(s) failed", "black", "white", "0px", "white")
+      manager.buildUnstable()
+    }
+    else {
+    manager.addBadge("success.gif","Passed")
+    manager.addShortText("All Critical Tests passed", "black", "white", "0px", "white")
+    }
+  }
+  else {
+  manager.addErrorBadge("no results")
+  manager.addShortText("Failed to get result",'black','red','0px','white')
+  }
+}
+
+
+</script>
+        <sandbox>false</sandbox>
+      </script>
+      <behavior>0</behavior>
+      <runForMatrixParent>false</runForMatrixParent>
+    </org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder>
+    <hudson.tasks.Fingerprinter>
+      <targets>ECL_revision_info.txt</targets>
+    </hudson.tasks.Fingerprinter>
+    <hudson.plugins.descriptionsetter.DescriptionSetterPublisher plugin="description-setter@1.10">
+      <regexp />
+      <regexpForFailed />
+      <description>$ECL_REVISION</description>
+      <descriptionForFailed>$ECL_REVISION</descriptionForFailed>
+      <setForMatrix>true</setForMatrix>
+    </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
+    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.30">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+          <configs>
+            <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+              <properties>BUILD_NUMBER=${BUILD_NUMBER}
+UP_PROJECT=PS_ReleaseTest_MCU_LRC_FBLRC1613</properties>
+            </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+          </configs>
+          <projects>HWAPI_COOP_SCTCase_Upload</projects>
+          <condition>ALWAYS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+        </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.BuildTrigger>
+    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.44">
+      <recipientList />
+      <configuredTriggers>
+        <hudson.plugins.emailext.plugins.trigger.FirstFailureTrigger>
+          <email>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <recipientProviders>
+              <hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider />
+              <hudson.plugins.emailext.plugins.recipients.ListRecipientProvider />
+            </recipientProviders>
+            <attachmentsPattern />
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+          <failureCount>1</failureCount>
+        </hudson.plugins.emailext.plugins.trigger.FirstFailureTrigger>
+        <hudson.plugins.emailext.plugins.trigger.FirstUnstableTrigger>
+          <email>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <recipientProviders>
+              <hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider />
+              <hudson.plugins.emailext.plugins.recipients.ListRecipientProvider />
+            </recipientProviders>
+            <attachmentsPattern />
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.FirstUnstableTrigger>
+      </configuredTriggers>
+      <contentType>text/html</contentType>
+      <defaultSubject>$DEFAULT_SUBJECT</defaultSubject>
+      <defaultContent>${JELLY_SCRIPT}</defaultContent>
+      <attachmentsPattern />
+      <presendScript />
+      <postsendScript />
+      <attachBuildLog>false</attachBuildLog>
+      <compressBuildLog>false</compressBuildLog>
+      <replyTo />
+      <saveOutput>false</saveOutput>
+      <disabled>false</disabled>
+      <matrixTriggerMode>BOTH</matrixTriggerMode>
+    </hudson.plugins.emailext.ExtendedEmailPublisher>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.29">
+      <deleteDirs>false</deleteDirs>
+      <cleanupParameter />
+      <externalDelete />
+    </hudson.plugins.ws__cleanup.PreBuildCleanup>
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.16-INTEL-1">
+      <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
+        <timeoutMinutes>180</timeoutMinutes>
+      </strategy>
+      <operationList>
+        <hudson.plugins.build__timeout.operations.AbortOperation />
+      </operationList>
+    </hudson.plugins.build__timeout.BuildTimeoutWrapper>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.3" />
+    <matrixtieparent.BuildWrapperMtp plugin="matrixtieparent@1.2">
+      <labelName>build</labelName>
+    </matrixtieparent.BuildWrapperMtp>
+  </buildWrappers>
+  <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
+    <runSequentially>false</runSequentially>
+  </executionStrategy>
+</matrix-project>

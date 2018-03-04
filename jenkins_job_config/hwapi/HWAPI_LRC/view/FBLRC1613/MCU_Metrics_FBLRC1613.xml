@@ -1,0 +1,245 @@
+<project>
+  <actions />
+  <description />
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>15</daysToKeep>
+        <numToKeep>-1</numToKeep>
+        <artifactDaysToKeep>7</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    <com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty plugin="build-failure-analyzer@1.15.0">
+      <doNotScan>false</doNotScan>
+    </com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty>
+    <com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty plugin="naginator@1.17.1">
+      <optOut>false</optOut>
+    </com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+      <maxConcurrentPerNode>0</maxConcurrentPerNode>
+      <maxConcurrentTotal>0</maxConcurrentTotal>
+      <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+      <throttleEnabled>false</throttleEnabled>
+      <throttleOption>project</throttleOption>
+      <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+      <paramsToUseForLimit />
+    </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+  </properties>
+  <scm class="hudson.scm.CustomSCM" plugin="customSCM@0.7.6">
+    <checkoutCommand>/build/home/ca_pscilrc/scripts/customscm-changelog.sh</checkoutCommand>
+    <calcRevisionCommand />
+    <compareRevisionCommand />
+    <repoBrowserURL />
+  </scm>
+  <assignedNode>build</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers />
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.plugins.copyartifact.CopyArtifact plugin="copyartifact@1.38">
+      <project>MCU_Build_Rel3_LRC_FBLRC1613</project>
+      <filter>MCU_revision_info.txt</filter>
+      <target />
+      <excludes />
+      <selector class="hudson.plugins.copyartifact.StatusBuildSelector" />
+      <doNotFingerprintArtifacts>false</doNotFingerprintArtifacts>
+    </hudson.plugins.copyartifact.CopyArtifact>
+    <hudson.tasks.Shell>
+      <command>if [ -f "MCU_revision_info.txt" ]; then
+        MCUrev=$(egrep 'Last Changed Rev:' MCU_revision_info.txt | sed 's:[^0-9]::g')
+else
+        echo "Unable to find MCU revision info"
+        exit 1
+fi
+
+if [ -d "MCU_trunk" ]; then
+        svn up --ignore-externals -r $MCUrev MCU_trunk
+else
+        svn co --ignore-externals https://svne1.access.nsn.com/isource/svnroot/LRC_SC_MCUHWAPI/FBLRC1613/trunk@$MCUrev MCU_trunk
+fi
+#svn export --force https://svne1.access.nokiasiemensnetworks.com/isource/svnroot/BTS_T_PS_TOOLS/CiTools/coverage_merge.py
+#svn export https://svne1.access.nsn.com/isource/svnroot/BTS_SC_MCUHWAPI/FBLRC1613/trunk/Tools/ctc2cob
+</command>
+    </hudson.tasks.Shell>
+    <hudson.plugins.copyartifact.CopyArtifact plugin="copyartifact@1.38">
+      <project>MCU_Build_Rel3_UnitTest_CCI_FBLRC1613</project>
+      <filter>ut_coverage.xml</filter>
+      <target>ut/HWR</target>
+      <excludes />
+      <selector class="hudson.plugins.copyartifact.StatusBuildSelector" />
+      <flatten>true</flatten>
+      <doNotFingerprintArtifacts>false</doNotFingerprintArtifacts>
+    </hudson.plugins.copyartifact.CopyArtifact>
+    <hudson.plugins.copyartifact.CopyArtifact plugin="copyartifact@1.38">
+      <project>MCU_Build_ObjectModel_UnitTests_LSP_AXM_CCI_FBLRC1613</project>
+      <filter>build/*.xml</filter>
+      <target>ut/om/lsp_axm</target>
+      <excludes />
+      <selector class="hudson.plugins.copyartifact.StatusBuildSelector" />
+      <flatten>true</flatten>
+      <doNotFingerprintArtifacts>false</doNotFingerprintArtifacts>
+    </hudson.plugins.copyartifact.CopyArtifact>
+    <hudson.tasks.Shell>
+      <command>svn export --force https://svne1.access.nsn.com/isource/svnroot/BTS_T_PS_TOOLS/CiTools/coverage_merge.py
+
+#!/bin/bash
+
+echo "--------------------------------------------------------"
+echo "--                   UT REPORTS                         "
+echo "--------------------------------------------------------"
+
+source /opt/ctc++/x86_64/7.3.1/interface/startup/linsee.env
+source /opt/python/x86_64/2.7.3/interface/startup/linsee.env
+
+mv ut/HWR/ut_coverage.xml ut_hwr_copertura.xml
+#mv ut/om/lcp/ut_cobertura.xml ut_om_lcp_copertura.xml
+mv ut/om/lsp_axm/ut_cobertura.xml ut_om_lsp_axm_copertura.xml
+#mv ut/om/lcp/build/ctc_code_coverage.xml ut_om_lcp_copertura.xml
+#mv ut/om/lsp_axm/build/ctc_code_coverage.xml ut_om_lsp_axm_copertura.xml
+
+echo "Making sources visible in coverage report..."
+sed -i ut_hwr_copertura.xml -e "s#filename=\"#filename=\"HWR\/#g"
+sed -i ut_hwr_copertura.xml -e "s#trunk/HWR#HWR#g"
+
+sed -i ut_om_lsp_axm_copertura.xml -e "s#\/ephemeral.*\.\.\/HWR#HWR#g"
+sed -i ut_om_lsp_axm_copertura.xml -e "s#\/ephemeral.*\/HWR#HWR#g"
+sed -i ut_om_lsp_axm_copertura.xml -e "s#\/ephemeral.*\/ObjectModel#ObjectModel#g"
+sed -i ut_om_lsp_axm_copertura.xml -e "s#\/ephemeral.*\/UnitTest#UnitTest#g"
+sed -i ut_om_lsp_axm_copertura.xml -e "s#\/ephemeral.*\/CCS_Services#CCS_Services#g"
+sed -i ut_om_lsp_axm_copertura.xml -e "s#MCU_trunk\/##g"
+sed -i ut_om_lsp_axm_copertura.xml -e "s#\.ephemeral.*trunk\.##g"
+
+#sed -i ut_om_lcp_copertura.xml -e "s#\/ephemeral.*\.\.\/HWR#HWR#g"
+#sed -i ut_om_lcp_copertura.xml -e "s#\/ephemeral.*\/HWR#HWR#g"
+#sed -i ut_om_lcp_copertura.xml -e "s#\/ephemeral.*\/ObjectModel#ObjectModel#g"
+#sed -i ut_om_lcp_copertura.xml -e "s#\/ephemeral.*\/UnitTest#UnitTest#g"
+#sed -i ut_om_lcp_copertura.xml -e "s#\/ephemeral.*\/CCS_Services#CCS_Services#g"
+#sed -i ut_om_lcp_copertura.xml -e "s#MCU_trunk\/##g"
+#sed -i ut_om_lcp_copertura.xml -e "s#\.ephemeral.*trunk\.##g"
+
+sed -i ut_om_lsp_axm_copertura.xml -e "s#\/var\/fpwork.*\.\.\/HWR#HWR#g"
+sed -i ut_om_lsp_axm_copertura.xml -e "s#\/var\/fpwork.*\/HWR#HWR#g"
+sed -i ut_om_lsp_axm_copertura.xml -e "s#\/var\/fpwork.*\/ObjectModel#ObjectModel#g"
+sed -i ut_om_lsp_axm_copertura.xml -e "s#\/var\/fpwork.*\/UnitTest#UnitTest#g"
+sed -i ut_om_lsp_axm_copertura.xml -e "s#\/var\/fpwork.*\/CCS_Services#CCS_Services#g"
+sed -i ut_om_lsp_axm_copertura.xml -e "s#MCU_trunk\/##g"
+sed -i ut_om_lsp_axm_copertura.xml -e "s#\.var\/fpwork.*trunk\.##g"
+
+#sed -i ut_om_lcp_copertura.xml -e "s#\/var\/fpwork.*\.\.\/HWR#HWR#g"
+#sed -i ut_om_lcp_copertura.xml -e "s#\/var\/fpwork.*\/HWR#HWR#g"
+#sed -i ut_om_lcp_copertura.xml -e "s#\/var\/fpwork.*\/ObjectModel#ObjectModel#g"
+#sed -i ut_om_lcp_copertura.xml -e "s#\/var\/fpwork.*\/UnitTest#UnitTest#g"
+#sed -i ut_om_lcp_copertura.xml -e "s#\/var\/fpwork.*\/CCS_Services#CCS_Services#g"
+#sed -i ut_om_lcp_copertura.xml -e "s#MCU_trunk\/##g"
+#sed -i ut_om_lcp_copertura.xml -e "s#\.var\/fpwork.*trunk\.##g"
+
+
+
+s='ut_hwr_copertura.xml '
+s+='ut_om_lsp_axm_copertura.xml '
+#s+='ut_om_lcp_copertura.xml '
+
+python coverage_merge.py $s -o ut_coverage_sonar.xml
+#ctcxmlmerge ut_om_lcp_copertura.xml ut_om_lsp_axm_copertura.xml -x ut_coverage_lrc_all.xml
+
+
+</command>
+    </hudson.tasks.Shell>
+    <hudson.plugins.copyartifact.CopyArtifact plugin="copyartifact@1.38">
+      <project>MCU_Build_LRC_ModuleTest_CCI_FBLRC1613</project>
+      <filter>mt_lrc_coverage.xml</filter>
+      <target>mt/LRC/HWR</target>
+      <excludes />
+      <selector class="hudson.plugins.copyartifact.StatusBuildSelector" />
+      <flatten>true</flatten>
+      <optional>true</optional>
+      <doNotFingerprintArtifacts>false</doNotFingerprintArtifacts>
+    </hudson.plugins.copyartifact.CopyArtifact>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+echo "--------------------------------------------------------"
+echo "--------------------------------------------------------"
+echo "--                   MT REPORTS                         "
+echo "--------------------------------------------------------"
+echo "--------------------------------------------------------"
+
+source /opt/ctc++/x86_64/7.3.1/interface/startup/linsee.env
+source /opt/python/x86_64/2.7.3/interface/startup/linsee.env
+
+mv mt/LRC/HWR/mt_lrc_coverage.xml mt_hwr_copertura.xml
+
+sed -i mt_hwr_copertura.xml -e "s#\.\.\.ObjectModel#ObjectModel#g"
+sed -i mt_hwr_copertura.xml -e "s#\.\./HWR/##g"
+sed -i mt_hwr_copertura.xml -e "s#\.\.\.HWR\.##g"
+sed -i mt_hwr_copertura.xml -e "s#\.\.\.ObjectModel#ObjectModel#g"
+
+s='mt_hwr_copertura.xml '
+#s+='ut_om_batch2_copertura.xml '
+#s+='ut_om_batch3_copertura.xml '
+
+python coverage_merge.py $s -o mt_coverage_sonar.xml
+
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>ut_coverage_sonar.xml,mt_coverage_sonar.xml</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>true</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.plugins.cobertura.CoberturaPublisher plugin="cobertura@1.9.8">
+      <coberturaReportFile>ut_coverage_sonar.xml</coberturaReportFile>
+      <onlyStable>false</onlyStable>
+      <failUnhealthy>false</failUnhealthy>
+      <failUnstable>false</failUnstable>
+      <autoUpdateHealth>false</autoUpdateHealth>
+      <autoUpdateStability>false</autoUpdateStability>
+      <zoomCoverageChart>false</zoomCoverageChart>
+      <maxNumberOfBuilds>0</maxNumberOfBuilds>
+      <failNoReports>false</failNoReports>
+      <healthyTarget>
+        <targets class="enum-map" enum-type="hudson.plugins.cobertura.targets.CoverageMetric">
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>CONDITIONAL</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>7000000</int>
+          </entry>
+        </targets>
+      </healthyTarget>
+      <unhealthyTarget>
+        <targets class="enum-map" enum-type="hudson.plugins.cobertura.targets.CoverageMetric">
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>CONDITIONAL</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>0</int>
+          </entry>
+        </targets>
+      </unhealthyTarget>
+      <failingTarget>
+        <targets class="enum-map" enum-type="hudson.plugins.cobertura.targets.CoverageMetric">
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>CONDITIONAL</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>0</int>
+          </entry>
+        </targets>
+      </failingTarget>
+      <sourceEncoding>ASCII</sourceEncoding>
+    </hudson.plugins.cobertura.CoberturaPublisher>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.3" />
+  </buildWrappers>
+</project>

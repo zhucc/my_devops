@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hudson.plugins.sectioned__view.SectionedView plugin="sectioned-view@1.20">
+  <name>HZSCM_TEST</name>
+  <description>&lt;h1 style=&quot;text-align:center;color:black;font-size:20px;&quot;&gt;Welcome to HGH HWAPI Release SCM Jenkins&lt;/h1&gt;</description>
+  <filterExecutors>false</filterExecutors>
+  <filterQueue>false</filterQueue>
+  <properties class="hudson.model.View$PropertyList"/>
+  <sections>
+    <hudson.plugins.sectioned__view.ListViewSection>
+      <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator"/>
+        <string>MCU_Build_LRC_CTC_HZSCM_TEST</string>
+        <string>MCU_Build_Promo_HZSCM_TEST</string>
+        <string>MCU_Build_Rel3_LRC_LSP_HZSCM_TEST</string>
+        <string>MCU_Build_Rel3_LRC_HZSCM_TEST</string>
+        <string>MCU_Build_Store_Libraries_HZSCM_TEST</string>
+        <string>MCU_Metrics_HZSCM_TEST</string>
+      </jobNames>
+      <jobFilters>
+        <hudson.views.RegExJobFilter plugin="view-job-filters@1.27">
+          <includeExcludeTypeString>excludeMatched</includeExcludeTypeString>
+          <valueTypeString>NAME</valueTypeString>
+          <regex>.*_CCI_.* </regex>
+        </hudson.views.RegExJobFilter>
+        <hudson.views.RegExJobFilter plugin="view-job-filters@1.27">
+          <includeExcludeTypeString>excludeMatched</includeExcludeTypeString>
+          <valueTypeString>NAME</valueTypeString>
+          <regex>.*_ObjectModel_.*_LCP_.*</regex>
+        </hudson.views.RegExJobFilter>
+      </jobFilters>
+      <name>MCU</name>
+      <width>FULL</width>
+      <alignment>CENTER</alignment>
+      <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+      </columns>
+    </hudson.plugins.sectioned__view.ListViewSection>
+    <hudson.plugins.sectioned__view.ListViewSection>
+      <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../hudson.plugins.sectioned__view.ListViewSection/jobNames/comparator"/>
+        <string>DSP_Build_Kep_LRC_HZSCM_TEST</string>
+        <string>DSP_Build_Promo_HZSCM_TEST</string>
+        <string>DSP_Build_RT_HZSCM_TEST</string>
+        <string>DSP_Build_Store_Libraries_HZSCM_TEST</string>
+        <string>DSP_Documentation_Kep_HZSCM_TEST</string>
+        <string>DSP_Documentation_KepArm_HZSCM_TEST</string>
+      </jobNames>
+      <jobFilters>
+        <hudson.views.RegExJobFilter plugin="view-job-filters@1.27">
+          <includeExcludeTypeString>excludeMatched</includeExcludeTypeString>
+          <valueTypeString>NAME</valueTypeString>
+          <regex>.*_CCI_.*</regex>
+        </hudson.views.RegExJobFilter>
+      </jobFilters>
+      <name>DSP</name>
+      <width>FULL</width>
+      <alignment>CENTER</alignment>
+      <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+      </columns>
+    </hudson.plugins.sectioned__view.ListViewSection>
+    <hudson.plugins.sectioned__view.ListViewSection>
+      <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../hudson.plugins.sectioned__view.ListViewSection/jobNames/comparator"/>
+        <string>PS_Release_Promo_HZSCM_TEST</string>
+        <string>PS_Report_Metrics_HZSCM_TEST</string>
+        <string>PS_StartupTest_LRC_HZSCM_TEST</string>
+      </jobNames>
+      <jobFilters>
+        <hudson.views.RegExJobFilter plugin="view-job-filters@1.27">
+          <includeExcludeTypeString>excludeMatched</includeExcludeTypeString>
+          <valueTypeString>NAME</valueTypeString>
+          <regex>.*_Report_Metrics_.*</regex>
+        </hudson.views.RegExJobFilter>
+      </jobFilters>
+      <name>SCT</name>
+      <width>FULL</width>
+      <alignment>CENTER</alignment>
+      <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+      </columns>
+    </hudson.plugins.sectioned__view.ListViewSection>
+    <hudson.plugins.sectioned__view.ListViewSection>
+      <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../hudson.plugins.sectioned__view.ListViewSection/jobNames/comparator"/>
+        <string>PS_CommitToPromo_Durations_HZSCM_TEST</string>
+        <string>PS_Release_Promo_QUEUE_HZSCM_TEST</string>
+        <string>PS_Report_Metrics_HZSCM_TEST</string>
+      </jobNames>
+      <jobFilters>
+        <hudson.views.RegExJobFilter plugin="view-job-filters@1.27">
+          <includeExcludeTypeString>excludeMatched</includeExcludeTypeString>
+          <valueTypeString>NAME</valueTypeString>
+          <regex>.*_LSP_Standalone_.*</regex>
+        </hudson.views.RegExJobFilter>
+        <hudson.views.RegExJobFilter plugin="view-job-filters@1.27">
+          <includeExcludeTypeString>excludeMatched</includeExcludeTypeString>
+          <valueTypeString>NAME</valueTypeString>
+          <regex>.*_Report_Metrics_.*</regex>
+        </hudson.views.RegExJobFilter>
+        <hudson.views.RegExJobFilter plugin="view-job-filters@1.27">
+          <includeExcludeTypeString>excludeMatched</includeExcludeTypeString>
+          <valueTypeString>NAME</valueTypeString>
+          <regex>.*_CommitToPromo_.*</regex>
+        </hudson.views.RegExJobFilter>
+      </jobFilters>
+      <name>PS Release Test</name>
+      <includeRegex>PS_ReleaseTest_.*_HZSCM_TEST</includeRegex>
+      <width>FULL</width>
+      <alignment>CENTER</alignment>
+      <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+      </columns>
+    </hudson.plugins.sectioned__view.ListViewSection>
+    <hudson.plugins.sectioned__view.ListViewSection>
+      <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../hudson.plugins.sectioned__view.ListViewSection/jobNames/comparator"/>
+      </jobNames>
+      <jobFilters>
+        <hudson.views.RegExJobFilter plugin="view-job-filters@1.27">
+          <includeExcludeTypeString>excludeMatched</includeExcludeTypeString>
+          <valueTypeString>NAME</valueTypeString>
+          <regex>.*_CCI_.*</regex>
+        </hudson.views.RegExJobFilter>
+      </jobFilters>
+      <name>ECL</name>
+      <includeRegex>ECL_.*_HZSCM_TEST</includeRegex>
+      <width>FULL</width>
+      <alignment>CENTER</alignment>
+      <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+      </columns>
+    </hudson.plugins.sectioned__view.ListViewSection>
+    <hudson.plugins.sectioned__view.ListViewSection>
+      <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../hudson.plugins.sectioned__view.ListViewSection/jobNames/comparator"/>
+      </jobNames>
+      <jobFilters/>
+      <name>DEVELOPER</name>
+      <includeRegex>^EM_BM.*</includeRegex>
+      <width>FULL</width>
+      <alignment>CENTER</alignment>
+      <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+      </columns>
+    </hudson.plugins.sectioned__view.ListViewSection>
+  </sections>
+</hudson.plugins.sectioned__view.SectionedView>

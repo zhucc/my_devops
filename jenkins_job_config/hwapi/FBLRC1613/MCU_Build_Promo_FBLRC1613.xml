@@ -1,0 +1,355 @@
+<project>
+  <actions />
+  <description />
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>20</numToKeep>
+        <artifactDaysToKeep>14</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    <com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty plugin="build-failure-analyzer@1.15.0">
+      <doNotScan>false</doNotScan>
+    </com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty>
+    <com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty plugin="naginator@1.17.1">
+      <optOut>false</optOut>
+    </com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+      <maxConcurrentPerNode>0</maxConcurrentPerNode>
+      <maxConcurrentTotal>0</maxConcurrentTotal>
+      <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+      <throttleEnabled>false</throttleEnabled>
+      <throttleOption>project</throttleOption>
+      <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+      <paramsToUseForLimit />
+    </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+  </properties>
+  <scm class="hudson.scm.SubversionSCM" plugin="subversion@2.5.7">
+    <locations>
+      <hudson.scm.SubversionSCM_-ModuleLocation>
+        <remote>https://svne1.access.nsn.com/isource/svnroot/LRC_SC_MCUHWAPI/FBLRC1613/trunk</remote>
+        <credentialsId>fa8c2477-6400-4524-9a50-7f7d255fd0dc</credentialsId>
+        <local>MCU_trunk</local>
+        <depthOption>empty</depthOption>
+        <ignoreExternalsOption>true</ignoreExternalsOption>
+      </hudson.scm.SubversionSCM_-ModuleLocation>
+    </locations>
+    <browser class="hudson.scm.browsers.ViewSVN">
+      <url>https://svne1.access.nsn.com/isource/svnroot/LRC_SC_MCUHWAPI/FBLRC1613/trunk/</url>
+    </browser>
+    <excludedRegions>/I_Interface/Global_Env/.*
+/I_Interface/Platform_Env/CCS_ENV/.*
+/I_Interface/Platform_Env/DSPHWAPI_ENV/.*
+/I_Interface/Platform_Env/Definitions/.*
+/I_Interface/Platform_Env/Messages/.*
+/CCS_.*
+/Tools/.*
+/OSE/.*
+/SwBuild/common/.*
+/ECL/.*
+/ObjectModel/.*</excludedRegions>
+    <includedRegions />
+    <excludedUsers />
+    <excludedRevprop />
+    <excludedCommitMessages />
+    <workspaceUpdater class="hudson.scm.subversion.UpdateUpdater" />
+    <ignoreDirPropChanges>false</ignoreDirPropChanges>
+    <filterChangelog>false</filterChangelog>
+  </scm>
+  <assignedNode>build</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <hudson.triggers.SCMTrigger>
+      <spec>* * * * *</spec>
+      <ignorePostCommitHooks>false</ignorePostCommitHooks>
+    </hudson.triggers.SCMTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+#ignore ECL gerrit change
+set +e
+rm -rf $WORKSPACE/param_file
+
+SVN_ROOT="https://svne1.access.nsn.com/isource/svnroot/LRC_SC_MCUHWAPI/"
+branch="FBLRC1613"
+cd MCU_trunk
+HEAD_rev=$(svn info | grep "Last Changed Rev" |awk -F ': ' '{print $2}')
+svn $SVN_COMMAND_NOFORCE_NOQUIET log -l 1 -v &gt; ${WORKSPACE}/head.log
+error()
+{
+    echo $1
+    exit 0
+}
+
+gerrit_change()
+{
+    #return 0  normal ECL change  ;  1: gerrit ECL change
+    svn log $SVN_ROOT/${branch}/trunk/ECL --xml  --with-no-revprops -l 2 &gt; changelog.xml
+    cat changelog.xml | grep "revision=" &gt; version.log
+    cat version.log
+    last_rev=$(cat version.log  | awk -F '"' '{print $2}' | sed -n '1p')
+    prev_rev=$(cat version.log  | awk -F '"' '{print $2}' | sed -n '2p')
+    [ ${HEAD_rev} = ${last_rev} ] || error "HEAD_rev=$HEAD_rev last_rev=$last_rev  not same ,something terrible happend"
+    svn export -r $last_rev  $SVN_ROOT/${branch}/trunk/ECL/ECL  ECL1
+    svn export -r $prev_rev  $SVN_ROOT/${branch}/trunk/ECL/ECL  ECL2
+    diff ECL1 ECL2 &gt; $WORKSPACE/diff.log || echo "ignore diff returns 1"
+    LSP_CHANGE=$(cat $WORKSPACE/diff.log | grep "&lt;"  | grep "ECL_PS_LRC_LSP_LFS_REL=")
+    [ "$LSP_CHANGE" ] &amp;&amp; return 0
+    ECL_GERRIT_CHANGE=$(cat $WORKSPACE/diff.log | grep "&lt;"  | grep "GERRIT=")
+    [ "$ECL_GERRIT_CHANGE" ] || return 0
+    [ "$ECL_GERRIT_CHANGE" ] &amp;&amp; return 1
+}
+
+ECL_HAS_CHANGE=$(cat ${WORKSPACE}/head.log | grep -A 1 "Changed paths" | grep "/trunk/ECL/ECL")
+if [ "$ECL_HAS_CHANGE" ];then
+    echo "ECL file change"
+    gerrit_change 
+    if [ $? == 1 ] ;then 
+        error "Description: Gerrite ECL Change &lt;br&gt; commitId=${SVN_REVISION}"
+    else
+        echo "Description: Normal ECL Change or LSP change &lt;br&gt; commitId=${SVN_REVISION}"
+    fi
+    
+else
+    echo "Description: Not ECL Change &lt;br&gt; commitId=${SVN_REVISION}"
+fi
+cd $WORKSPACE
+
+export BRANCH=FBLRC1613
+
+/home/ca_pscilrc/scirtem_test/project_MCU_Build_Promo.sh 
+#$HWAPI_SCRIPT_DIR/bin/project_MCU_Build_Promo.sh </command>
+    </hudson.tasks.Shell>
+    <hudson.plugins.parameterizedtrigger.TriggerBuilder plugin="parameterized-trigger@2.30">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+          <configs>
+            <hudson.plugins.parameterizedtrigger.FileBuildParameters>
+              <propertiesFile>param_file</propertiesFile>
+              <failTriggerOnMissing>true</failTriggerOnMissing>
+              <useMatrixChild>false</useMatrixChild>
+              <onlyExactRuns>false</onlyExactRuns>
+            </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+          </configs>
+          <projects>MCU_Build_Rel3_LRC_FBLRC1613,MCU_Build_Rel3_LRC_LSP_FBLRC1613</projects>
+          <condition>ALWAYS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+          <block>
+            <buildStepFailureThreshold>
+              <name>UNSTABLE</name>
+              <ordinal>1</ordinal>
+              <color>YELLOW</color>
+              <completeBuild>true</completeBuild>
+            </buildStepFailureThreshold>
+            <failureThreshold>
+              <name>UNSTABLE</name>
+              <ordinal>1</ordinal>
+              <color>YELLOW</color>
+              <completeBuild>true</completeBuild>
+            </failureThreshold>
+          </block>
+          <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+        </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.TriggerBuilder>
+    <hudson.plugins.parameterizedtrigger.TriggerBuilder plugin="parameterized-trigger@2.30">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+          <configs>
+            <hudson.plugins.parameterizedtrigger.FileBuildParameters>
+              <propertiesFile>param_file</propertiesFile>
+              <failTriggerOnMissing>true</failTriggerOnMissing>
+              <useMatrixChild>false</useMatrixChild>
+              <onlyExactRuns>false</onlyExactRuns>
+            </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+          </configs>
+          <projects>MCU_Metrics_FBLRC1613</projects>
+          <condition>ALWAYS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+          <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+        </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.TriggerBuilder>
+    <hudson.tasks.Shell>
+      <command>#Get data from mainbranch dsp promo
+wget -q ${BUILD_URL}/api/xml?tree=actions[triggeredBuilds[url]] -O subjobs.xml
+
+for subjob in $(cat subjobs.xml | xmllint --format - | sed -n "s#.*&lt;url&gt;\(.*\)&lt;/url&gt;#\1#p"); 
+do
+  subjobname=$(echo $subjob | sed "s#.*job/\(.*\)/.*/#\1#")
+  wget -q ${subjob}/api/xml/?tree=duration -O ${subjobname}.xml
+  
+  duration=$(cat ${subjobname}.xml | xmllint --format - | sed -n "s#.*duration&gt;\(.*\)&lt;/duration.*#scale=2;\1 / 60000#p" | bc -l )
+  line1="${line1}${subjobname}, "
+  line2="${line2}${duration}, "
+done
+echo $line1 &gt; plot.csv
+echo $line2 &gt;&gt; plot.csv</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>MCU_trunk/ECL/ECL, MCU_revision_info.txt, MCU_build_number.txt</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>true</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+    <jenkins.plugins.displayupstreamchanges.DisplayUpstreamChangesRecorder plugin="display-upstream-changes@0.3.2" />
+    <hudson.plugins.plot.PlotPublisher plugin="plot@1.9">
+      <plots>
+        <hudson.plugins.plot.Plot>
+          <title>Duration</title>
+          <yaxis>Min</yaxis>
+          <series>
+            <hudson.plugins.plot.CSVSeries>
+              <file>plot.csv</file>
+              <label />
+              <fileType>csv</fileType>
+              <inclusionFlag>OFF</inclusionFlag>
+              <exclusionValues />
+              <url />
+              <displayTableFlag>true</displayTableFlag>
+            </hudson.plugins.plot.CSVSeries>
+          </series>
+          <group>Subjobs</group>
+          <numBuilds />
+          <csvFileName>1837091757.csv</csvFileName>
+          <csvLastModification>0</csvLastModification>
+          <style>line</style>
+          <useDescr>false</useDescr>
+          <keepRecords>false</keepRecords>
+          <exclZero>false</exclZero>
+          <logarithmic>false</logarithmic>
+        </hudson.plugins.plot.Plot>
+      </plots>
+    </hudson.plugins.plot.PlotPublisher>
+    <hudson.plugins.descriptionsetter.DescriptionSetterPublisher plugin="description-setter@1.10">
+      <regexp>^Description:(.*)</regexp>
+      <regexpForFailed>^Description:(.*)</regexpForFailed>
+      <setForMatrix>false</setForMatrix>
+    </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
+    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.30">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+          <configs>
+            <hudson.plugins.parameterizedtrigger.FileBuildParameters>
+              <propertiesFile>param_file</propertiesFile>
+              <failTriggerOnMissing>true</failTriggerOnMissing>
+              <useMatrixChild>false</useMatrixChild>
+              <onlyExactRuns>false</onlyExactRuns>
+            </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+          </configs>
+          <projects>MCU_Build_Store_Libraries_FBLRC1613</projects>
+          <condition>SUCCESS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+        </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.BuildTrigger>
+    <hudson.plugins.claim.ClaimPublisher plugin="claim@2.8" />
+    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.44">
+      <recipientList>$DEFAULT_RECIPIENTS,cheng.3.luo@nokia.com</recipientList>
+      <configuredTriggers>
+        <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+          <email>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <recipientProviders>
+              <hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider />
+              <hudson.plugins.emailext.plugins.recipients.CulpritsRecipientProvider />
+              <hudson.plugins.emailext.plugins.recipients.ListRecipientProvider />
+            </recipientProviders>
+            <attachmentsPattern />
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+        <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+          <email>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <recipientProviders>
+              <hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider />
+              <hudson.plugins.emailext.plugins.recipients.CulpritsRecipientProvider />
+              <hudson.plugins.emailext.plugins.recipients.ListRecipientProvider />
+            </recipientProviders>
+            <attachmentsPattern />
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+        <hudson.plugins.emailext.plugins.trigger.UnstableTrigger>
+          <email>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <recipientProviders>
+              <hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider />
+              <hudson.plugins.emailext.plugins.recipients.CulpritsRecipientProvider />
+              <hudson.plugins.emailext.plugins.recipients.ListRecipientProvider />
+            </recipientProviders>
+            <attachmentsPattern />
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.UnstableTrigger>
+        <hudson.plugins.emailext.plugins.trigger.AbortedTrigger>
+          <email>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <recipientProviders>
+              <hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider />
+              <hudson.plugins.emailext.plugins.recipients.CulpritsRecipientProvider />
+              <hudson.plugins.emailext.plugins.recipients.ListRecipientProvider />
+            </recipientProviders>
+            <attachmentsPattern />
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.AbortedTrigger>
+      </configuredTriggers>
+      <contentType>text/html</contentType>
+      <defaultSubject>$DEFAULT_SUBJECT</defaultSubject>
+      <defaultContent>${SCRIPT, template="build-promo-html.template"}</defaultContent>
+      <attachmentsPattern>MCU_revision_info.txt	</attachmentsPattern>
+      <presendScript />
+      <postsendScript />
+      <attachBuildLog>false</attachBuildLog>
+      <compressBuildLog>false</compressBuildLog>
+      <replyTo>$DEFAULT_REPLYTO</replyTo>
+      <saveOutput>false</saveOutput>
+      <disabled>true</disabled>
+    </hudson.plugins.emailext.ExtendedEmailPublisher>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.16-INTEL-1">
+      <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
+        <timeoutMinutes>100</timeoutMinutes>
+      </strategy>
+      <operationList />
+    </hudson.plugins.build__timeout.BuildTimeoutWrapper>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.3" />
+  </buildWrappers>
+</project>

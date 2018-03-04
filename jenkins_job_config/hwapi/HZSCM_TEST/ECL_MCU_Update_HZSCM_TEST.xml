@@ -1,0 +1,214 @@
+<project>
+  <actions />
+  <description>&lt;br&gt; This job tracks &lt;font color="red"&gt;&lt;b&gt; /BTS_SCM_PS/ECL/HZSCM_TEST/ECL_CCS &lt;/b&gt;&lt;/font&gt; and when change occurs, validation build for MCU will be done &lt;br&gt;</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>7</daysToKeep>
+        <numToKeep>-1</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    <com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty plugin="build-failure-analyzer@1.15.0">
+      <doNotScan>false</doNotScan>
+    </com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty>
+    <com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty plugin="naginator@1.17.1">
+      <optOut>false</optOut>
+    </com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+  </properties>
+  <scm class="hudson.scm.SubversionSCM" plugin="subversion@2.5.7">
+    <locations>
+      <hudson.scm.SubversionSCM_-ModuleLocation>
+        <remote>https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/ECL/HZSCM_TEST/ECL_CCS</remote>
+        <credentialsId>b7d115d7-99c9-451a-88f3-892e6c3cd444</credentialsId>
+        <local>ECL_CCS</local>
+        <depthOption>infinity</depthOption>
+        <ignoreExternalsOption>false</ignoreExternalsOption>
+      </hudson.scm.SubversionSCM_-ModuleLocation>
+    </locations>
+    <browser class="hudson.scm.browsers.ViewSVN">
+      <url>https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/</url>
+    </browser>
+    <excludedRegions />
+    <includedRegions />
+    <excludedUsers />
+    <excludedRevprop />
+    <excludedCommitMessages />
+    <workspaceUpdater class="hudson.scm.subversion.UpdateUpdater" />
+    <ignoreDirPropChanges>false</ignoreDirPropChanges>
+    <filterChangelog>false</filterChangelog>
+  </scm>
+  <assignedNode>build</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>true</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <authToken>restart</authToken>
+  <triggers>
+    <hudson.triggers.SCMTrigger>
+      <spec># check every 2 minutes
+H/2 * * * *</spec>
+      <ignorePostCommitHooks>false</ignorePostCommitHooks>
+    </hudson.triggers.SCMTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+export BRANCH=HZSCM_TEST
+
+$HWAPI_SCRIPT_DIR/bin/project_ECL_MCU_Update.sh</command>
+    </hudson.tasks.Shell>
+    <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder plugin="conditional-buildstep@1.3.3">
+      <condition class="org.jenkins_ci.plugins.run_condition.core.FileExistsCondition" plugin="run-condition@1.0">
+        <file>create_new_lfs_image</file>
+        <baseDir class="org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace" />
+      </condition>
+      <buildStep class="hudson.plugins.parameterizedtrigger.TriggerBuilder" plugin="parameterized-trigger@2.30">
+        <configs>
+          <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+            <configs>
+              <hudson.plugins.parameterizedtrigger.FileBuildParameters>
+                <propertiesFile>create_new_lfs_image</propertiesFile>
+                <failTriggerOnMissing>true</failTriggerOnMissing>
+                <useMatrixChild>false</useMatrixChild>
+                <onlyExactRuns>false</onlyExactRuns>
+              </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+            </configs>
+            <projects>_KSI_create_cloud_lfs_image_for_QEMU</projects>
+            <condition>ALWAYS</condition>
+            <triggerWithNoParameters>false</triggerWithNoParameters>
+            <block>
+              <buildStepFailureThreshold>
+                <name>FAILURE</name>
+                <ordinal>2</ordinal>
+                <color>RED</color>
+                <completeBuild>true</completeBuild>
+              </buildStepFailureThreshold>
+              <unstableThreshold>
+                <name>UNSTABLE</name>
+                <ordinal>1</ordinal>
+                <color>YELLOW</color>
+                <completeBuild>true</completeBuild>
+              </unstableThreshold>
+              <failureThreshold>
+                <name>FAILURE</name>
+                <ordinal>2</ordinal>
+                <color>RED</color>
+                <completeBuild>true</completeBuild>
+              </failureThreshold>
+            </block>
+            <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+          </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+        </configs>
+      </buildStep>
+      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0" />
+    </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
+    <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder plugin="conditional-buildstep@1.3.3">
+      <condition class="org.jenkins_ci.plugins.run_condition.core.FileExistsCondition" plugin="run-condition@1.0">
+        <file>create_new_LRC_lfs_image</file>
+        <baseDir class="org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace" />
+      </condition>
+      <buildStep class="hudson.plugins.parameterizedtrigger.TriggerBuilder" plugin="parameterized-trigger@2.30">
+        <configs>
+          <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+            <configs>
+              <hudson.plugins.parameterizedtrigger.FileBuildParameters>
+                <propertiesFile>create_new_LRC_lfs_image</propertiesFile>
+                <failTriggerOnMissing>true</failTriggerOnMissing>
+                <useMatrixChild>false</useMatrixChild>
+                <onlyExactRuns>false</onlyExactRuns>
+              </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+            </configs>
+            <projects>_KSI_create_cloud_lfs_image_for_QEMU</projects>
+            <condition>ALWAYS</condition>
+            <triggerWithNoParameters>false</triggerWithNoParameters>
+            <block>
+              <buildStepFailureThreshold>
+                <name>FAILURE</name>
+                <ordinal>2</ordinal>
+                <color>RED</color>
+                <completeBuild>true</completeBuild>
+              </buildStepFailureThreshold>
+              <unstableThreshold>
+                <name>UNSTABLE</name>
+                <ordinal>1</ordinal>
+                <color>YELLOW</color>
+                <completeBuild>true</completeBuild>
+              </unstableThreshold>
+              <failureThreshold>
+                <name>FAILURE</name>
+                <ordinal>2</ordinal>
+                <color>RED</color>
+                <completeBuild>true</completeBuild>
+              </failureThreshold>
+            </block>
+            <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+          </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+        </configs>
+      </buildStep>
+      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0" />
+    </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>MCU_trunk/ECL/ECL, ECL_revision_info.txt</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.plugins.descriptionsetter.DescriptionSetterPublisher plugin="description-setter@1.10">
+      <regexp>^Description: (.*)</regexp>
+      <regexpForFailed />
+      <setForMatrix>false</setForMatrix>
+    </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
+    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.44">
+      <recipientList>$DEFAULT_RECIPIENTS</recipientList>
+      <configuredTriggers>
+        <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+          <email>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <recipientProviders>
+              <hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider />
+            </recipientProviders>
+            <attachmentsPattern />
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+      </configuredTriggers>
+      <contentType>default</contentType>
+      <defaultSubject>$DEFAULT_SUBJECT</defaultSubject>
+      <defaultContent>$DEFAULT_CONTENT</defaultContent>
+      <attachmentsPattern />
+      <presendScript>$DEFAULT_PRESEND_SCRIPT</presendScript>
+      <postsendScript>$DEFAULT_POSTSEND_SCRIPT</postsendScript>
+      <attachBuildLog>false</attachBuildLog>
+      <compressBuildLog>false</compressBuildLog>
+      <replyTo>$DEFAULT_REPLYTO</replyTo>
+      <saveOutput>false</saveOutput>
+      <disabled>false</disabled>
+    </hudson.plugins.emailext.ExtendedEmailPublisher>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.29">
+      <deleteDirs>false</deleteDirs>
+      <cleanupParameter />
+      <externalDelete />
+    </hudson.plugins.ws__cleanup.PreBuildCleanup>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.3" />
+  </buildWrappers>
+</project>

@@ -1,0 +1,259 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>14</daysToKeep>
+        <numToKeep>-1</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28"/>
+    <com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty plugin="build-failure-analyzer@1.15.0">
+      <doNotScan>false</doNotScan>
+    </com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty>
+    <com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty plugin="naginator@1.17.1">
+      <optOut>false</optOut>
+    </com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>PROMO_BUILD</name>
+          <description></description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>FORCE</name>
+          <description>Force to update zip files to nfs share, even there are already one available.</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>DRY_RUN</name>
+          <description></description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>BRANCH</name>
+          <description></description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+      <maxConcurrentPerNode>0</maxConcurrentPerNode>
+      <maxConcurrentTotal>0</maxConcurrentTotal>
+      <categories class="java.util.concurrent.CopyOnWriteArrayList"/>
+      <throttleEnabled>false</throttleEnabled>
+      <throttleOption>project</throttleOption>
+      <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+      <paramsToUseForLimit></paramsToUseForLimit>
+    </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+  </properties>
+  <scm class="hudson.scm.CustomSCM" plugin="customSCM@0.7.6">
+    <checkoutCommand>/build/home/ca_pscilrc/scripts/customscm-changelog.sh</checkoutCommand>
+    <calcRevisionCommand></calcRevisionCommand>
+    <compareRevisionCommand></compareRevisionCommand>
+    <repoBrowserURL></repoBrowserURL>
+  </scm>
+  <assignedNode>HWAPI_Linsee_Build_Hzling28</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.plugins.copyartifact.CopyArtifact plugin="copyartifact@1.38">
+      <project>DSP_Build_Promo_MAINBRANCH_LRC</project>
+      <filter>MAINBRANCH_LRC_dsp_revision_info.txt</filter>
+      <target></target>
+      <excludes></excludes>
+      <selector class="hudson.plugins.copyartifact.SpecificBuildSelector">
+        <buildNumber>$PROMO_BUILD</buildNumber>
+      </selector>
+      <doNotFingerprintArtifacts>false</doNotFingerprintArtifacts>
+    </hudson.plugins.copyartifact.CopyArtifact>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+$HWAPI_SCRIPT_DIR/bin/project_DSP_Build_Store_Libraries.sh</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>branch=MAINBRANCH_LRC
+DSPrev=$(egrep &apos;Last Changed Rev:&apos; &quot;$branch&quot;_dsp_revision_info.txt | sed &apos;s:[^0-9]::g&apos;) || exit 1
+
+echo &quot;DSPrev=${DSPrev}&quot; &gt; enb.txt
+
+#Add CCS_RT libs to nfs share and update MCU_ECL
+CCS_RT_VERSION=$(svn info --non-interactive --trust-server-cert --username=ca_pscilrc --password=fCfYAXbr https://svne1.access.nsn.com/isource/svnroot/LRC_SC_UPHWAPI/MAINBRANCH_LRC/trunk/C_Platform/CCS_RT -r $DSPrev | sed -n &quot;s#Last Changed Rev: \([0-9]*\)#\1#p&quot;)
+IFUPCCS_VERSION=$(svn info --non-interactive --trust-server-cert --username=ca_pscilrc --password=fCfYAXbr https://svne1.access.nsn.com/isource/svnroot/LRC_SC_UPHWAPI/MAINBRANCH_LRC/trunk/I_Interface/Platform_Env/CCS_ENV -r $DSPrev | sed -n &quot;s#Last Changed Rev: \([0-9]*\)#\1#p&quot;)
+if [ ! -n &quot;$CCS_RT_VERSION&quot; ] || [ ! -n &quot;$IFUPCCS_VERSION&quot; ]; then
+  echo &quot;CCS_RT_VERSION=$CCS_RT_VERSION or IFUPCCS_VERSION=$IFUPCCS_VERSION is not exist&quot;
+  exit 1
+fi
+rm -fr ECL_MCU
+mkdir ECL_MCU
+#svn co $SVN_COMMAND https://svne1.access.nsn.com/isource/svnroot/LRC_SC_MCUHWAPI/MAINBRANCH_LRC/trunk/ECL ECL_MCU
+
+if [  -e MCU_trunk_git ];then
+	cd MCU_trunk_git 
+    git fetch --all 
+    git reset --hard origin/master
+    cd  ..
+else
+    git clone ssh://`whoami`@gerrite1.ext.net.nokia.com:8282/LRC_MCUHWAPI_MAINBRANCH_LRC MCU_trunk_git
+fi
+rsync -avz  MCU_trunk_git/ECL/ECL   ECL_MCU/ECL
+
+rm -fr ECL_DSP
+svn co $SVN_COMMAND https://svne1.access.nsn.com/isource/svnroot/LRC_SC_UPHWAPI/MAINBRANCH_LRC/trunk/ECL -r $DSPrev ECL_DSP
+
+
+#original
+#MCU_ECL_CCS_RT=$(sed -n &quot;s#ECL_CCS_RT=.*@\([0-9]*\)#\1#p&quot; ECL_MCU/ECL)
+#MCU_ECL_PS_LRC_LSP_LFS_REL=$(sed -n &quot;s#ECL_PS_LRC_LSP_LFS_REL=\([0-9]*\)#\1#p&quot; ECL_MCU/ECL)
+#MCU_ECL_PS_LRC_LSP_LFS_FEP_REL=$(sed -n &quot;s#ECL_PS_LRC_LSP_LFS_FEP_REL=\([0-9]*\)#\1#p&quot; ECL_MCU/ECL)
+
+#DSP_ECL_PS_LRC_LSP_LFS_REL=$(sed -n &quot;s#ECL_PS_LRC_LSP_LFS_REL=\([0-9]*\)#\1#p&quot; ECL_DSP/ECL)
+#DSP_ECL_PS_LRC_LSP_LFS_OS=$(sed -n &quot;s#ECL_PS_LRC_LSP_LFS_OS=\([0-9]*\)#\1#p&quot; ECL_DSP/ECL)
+#DSP_ECL_PS_LRC_LSP_LFS_FEP_REL=$(sed -n &quot;s#ECL_PS_LRC_LSP_LFS_FEP_REL=\([0-9]*\)#\1#p&quot; ECL_DSP/ECL)
+
+#modified
+MCU_ECL_CCS_RT=$(sed -n &quot;s#ECL_CCS_RT=.*@\([0-9]*\)#\1#p&quot; ECL_MCU/ECL)
+MCU_ECL_IFUPCCS=$(sed -n &quot;s#ECL_IFUPCCS=.*@\([0-9]*\)#\1#p&quot; ECL_MCU/ECL)
+MCU_ECL_PS_LRC_LSP_LFS_REL=$(sed -n &quot;s#ECL_PS_LRC_LSP_LFS_REL=\([0-9]*\)#\1#p&quot; ECL_MCU/ECL)
+
+if [ ! -n &quot;$MCU_ECL_CCS_RT&quot; ] || [ ! -n &quot;$MCU_ECL_IFUPCCS&quot; ] || [ ! -n &quot;$MCU_ECL_PS_LRC_LSP_LFS_REL&quot; ]; then
+  echo &quot;MCU_ECL_CCS_RT=$MCU_ECL_CCS_RT or MCU_ECL_IFUPCCS=$MCU_ECL_IFUPCCS or MCU_ECL_PS_LRC_LSP_LFS_REL=$MCU_ECL_PS_LRC_LSP_LFS_REL is not exist&quot;
+  exit 1
+fi
+
+DSP_ECL_PS_LRC_LSP_LFS_REL=$(sed -n &quot;s#ECL_PS_LRC_LSP_LFS_REL=\([0-9]*\)#\1#p&quot; ECL_DSP/ECL)
+DSP_ECL_PS_LRC_LSP_LFS_OS=$(sed -n &quot;s#ECL_PS_LRC_LSP_LFS_OS=\([0-9]*\)#\1#p&quot; ECL_DSP/ECL)
+
+if [ ! -n &quot;$DSP_ECL_PS_LRC_LSP_LFS_REL&quot; ] || [ ! -n &quot;$DSP_ECL_PS_LRC_LSP_LFS_OS&quot; ]; then
+  echo &quot;DSP_ECL_PS_LRC_LSP_LFS_REL=$DSP_ECL_PS_LRC_LSP_LFS_REL or DSP_ECL_PS_LRC_LSP_LFS_OS=$DSP_ECL_PS_LRC_LSP_LFS_OS is not exist&quot;
+  exit 1
+fi
+
+#Check if any of following are changed: 
+#ECL_PS_LRC_LSP_LFS_REL
+#ECL_IFCCS
+#CCS_RT_VERSION
+
+if [ &quot;$IFUPCCS_VERSION&quot; != &quot;$MCU_ECL_IFUPCCS&quot; ] || [ &quot;$CCS_RT_VERSION&quot; != &quot;$MCU_ECL_CCS_RT&quot; ] || [ &quot;$DSP_ECL_PS_LRC_LSP_LFS_REL&quot; != &quot;$MCU_ECL_PS_LRC_LSP_LFS_REL&quot; ]; then
+#if [ &quot;$CCS_RT_VERSION&quot; != &quot;$MCU_ECL_CCS_RT&quot; ] || [ &quot;$DSP_ECL_PS_LRC_LSP_LFS_REL&quot; != &quot;$MCU_ECL_PS_LRC_LSP_LFS_REL&quot; ]; then
+  echo &quot;Update MCU ECL as current ECL_CCS_RT is $ECL_CCS_RT and new revisin is $CCS_RT_VERSION&quot;
+  sed -i &quot;s#\(ECL_IFUPCCS=.*@\).*#\1$IFUPCCS_VERSION#&quot; ECL_MCU/ECL
+  sed -i &quot;s#\(ECL_IFUPCCS=.*LRC_SC_UPHWAPI/\).*\(/trunk.*@\).*#\1MAINBRANCH_LRC\2$IFUPCCS_VERSION#&quot; ECL_MCU/ECL
+  sed -i &quot;s#\(ECL_CCS_RT=.*@\).*#\1$CCS_RT_VERSION#&quot; ECL_MCU/ECL
+  sed -i &quot;s#\(ECL_CCS_RT=.*LRC_SC_UPHWAPI/\).*\(/trunk.*@\).*#\1MAINBRANCH_LRC\2$CCS_RT_VERSION#&quot; ECL_MCU/ECL
+  sed -i &quot;s#\(ECL_PS_LRC_LSP_LFS_REL=\).*#\1$DSP_ECL_PS_LRC_LSP_LFS_REL#&quot; ECL_MCU/ECL
+  sed -i &quot;s#\(ECL_PS_LRC_LSP_LFS_OS=\).*#\1$DSP_ECL_PS_LRC_LSP_LFS_OS#&quot; ECL_MCU/ECL
+  sed -i &quot;s#\(ECL_CCS_RT_LIBS=DSP_LIBS_\).*#\1${DSPrev}.zip#&quot; ECL_MCU/ECL
+  if [  -e  MCU_trunk_git ];then
+      cd MCU_trunk_git 
+      git fetch --all 
+      git reset --hard origin/master
+      cd  ..
+  else
+      git clone ssh://`whoami`@gerrite1.ext.net.nokia.com:8282/LRC_MCUHWAPI_MAINBRANCH_LRC MCU_trunk_git
+  fi
+  cat ECL_MCU/ECL &gt; MCU_trunk_git/ECL/ECL
+  cd MCU_trunk_git
+  git diff HEAD &gt; ../ecl_diff.txt
+  git add ECL/ECL
+  echo &quot;DSP_Build_RT_MAINBRANCH_LRC update following ECL entries:&quot; &gt; commit_msg.txt
+  echo &quot;Changed components: &quot; &gt;&gt; commit_msg.txt
+  grep -E &quot;[-+]ECL&quot; ../ecl_diff.txt &gt;&gt; commit_msg.txt
+  git commit -F commit_msg.txt
+  git push origin master:master || { echo &quot;push ECL to master failed &quot;; exit 1; }
+  #svn up $SVN_COMMAND_NOFORCE ECL_MCU
+  #svn ci $SVN_COMMAND_NOFORCE ECL_MCU -F commit_msg.txt
+  MCUrev=$(git rev-parse master)
+  echo &quot;SCMPRELOGOUT: ${DSPrev}-&gt;${MCUrev}&quot;
+fi
+
+echo http://10.140.19.16/jobs/$JOB_NAME/builds/$BUILD_NUMBER/log &gt; logurl.txt </command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>MAINBRANCH_LRC_dsp_revision_info.txt</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.BuildTrigger>
+      <childProjects>ECL_HWAPI_MAINBRANCH_LRC</childProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+        <completeBuild>true</completeBuild>
+      </threshold>
+    </hudson.tasks.BuildTrigger>
+    <org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder plugin="groovy-postbuild@2.3.1">
+      <script plugin="script-security@1.34">
+        <script>revision=manager.build.buildVariables.get(&quot;DSPrev&quot;)
+manager.createSummary(&quot;package.gif&quot;).appendText(&quot;&lt;a href=http://psci.emea.nsn-net.net/libs/DSPHWAPI/DSP_LIBS_&quot;+ revision +&quot;.zip&gt;DOWNLOAD: BINS, OUTS, LIBS&lt;/a&gt;&quot;, false)</script>
+        <sandbox>false</sandbox>
+      </script>
+      <behavior>0</behavior>
+      <runForMatrixParent>false</runForMatrixParent>
+    </org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder>
+    <hudson.plugins.descriptionsetter.DescriptionSetterPublisher plugin="description-setter@1.10">
+      <regexp>^SCMPRELOGOUT: (.*)</regexp>
+      <regexpForFailed></regexpForFailed>
+      <setForMatrix>false</setForMatrix>
+    </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
+    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.44">
+      <recipientList>$DEFAULT_RECIPIENTS</recipientList>
+      <configuredTriggers>
+        <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+          <email>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <recipientProviders>
+              <hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider/>
+            </recipientProviders>
+            <attachmentsPattern></attachmentsPattern>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+      </configuredTriggers>
+      <contentType>default</contentType>
+      <defaultSubject>$DEFAULT_SUBJECT</defaultSubject>
+      <defaultContent>$DEFAULT_CONTENT</defaultContent>
+      <attachmentsPattern></attachmentsPattern>
+      <presendScript>$DEFAULT_PRESEND_SCRIPT</presendScript>
+      <postsendScript>$DEFAULT_POSTSEND_SCRIPT</postsendScript>
+      <attachBuildLog>false</attachBuildLog>
+      <compressBuildLog>false</compressBuildLog>
+      <replyTo>$DEFAULT_REPLYTO</replyTo>
+      <saveOutput>false</saveOutput>
+      <disabled>false</disabled>
+    </hudson.plugins.emailext.ExtendedEmailPublisher>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.29">
+      <deleteDirs>false</deleteDirs>
+      <cleanupParameter></cleanupParameter>
+      <externalDelete></externalDelete>
+    </hudson.plugins.ws__cleanup.PreBuildCleanup>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.3"/>
+  </buildWrappers>
+</project>

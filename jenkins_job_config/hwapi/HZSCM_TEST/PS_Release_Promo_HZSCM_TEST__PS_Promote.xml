@@ -1,0 +1,64 @@
+<hudson.plugins.promoted__builds.PromotionProcess plugin="promoted-builds@2.27">
+  <actions />
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    <com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty plugin="build-failure-analyzer@1.15.0">
+      <doNotScan>false</doNotScan>
+    </com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM" />
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers />
+  <concurrentBuild>false</concurrentBuild>
+  <conditions>
+    <hudson.plugins.promoted__builds.conditions.DownstreamPassCondition>
+      <jobs>PS_Release_Promo_QUEUE_HZSCM_TEST, </jobs>
+      <evenIfUnstable>true</evenIfUnstable>
+    </hudson.plugins.promoted__builds.conditions.DownstreamPassCondition>
+  </conditions>
+  <icon>star-purple</icon>
+  <isVisible />
+  <buildSteps>
+    <hudson.tasks.Shell>
+      <command>export branch=HZSCM_TEST
+
+#svn export --force https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/branches/ps_rel_ci/jenkins/scripts/CI2RMupdate.sh
+
+#chmod +x CI2RMupdate.sh
+
+#./CI2RMupdate.sh
+
+
+svn export --force https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/branches/ps_rel_ci/jenkins/scripts_lrc/CI2RMupdate.sh
+
+cp -f /home/ca_pscilrc/scirtem_test/CI2RMupdate.sh .
+
+chmod +x CI2RMupdate.sh
+
+./CI2RMupdate.sh
+</command>
+    </hudson.tasks.Shell>
+    <hudson.plugins.groovy.SystemGroovy plugin="groovy@1.29">
+      <scriptSource class="hudson.plugins.groovy.StringScriptSource">
+        <command />
+      </scriptSource>
+      <bindings />
+      <classpath />
+    </hudson.plugins.groovy.SystemGroovy>
+    <hudson.plugins.parameterizedtrigger.TriggerBuilder plugin="parameterized-trigger@2.30">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+          <configs class="empty-list" />
+          <projects>PS_CI2RM_analyse_HZSCM_TEST</projects>
+          <condition>ALWAYS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+          <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+        </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.TriggerBuilder>
+  </buildSteps>
+</hudson.plugins.promoted__builds.PromotionProcess>

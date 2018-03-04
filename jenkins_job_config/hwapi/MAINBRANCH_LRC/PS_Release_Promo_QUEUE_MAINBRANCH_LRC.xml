@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Purpose of this job is keep queue of release tests. PS release promo job will start this after startup jobs are done</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28"/>
+    <com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty plugin="build-failure-analyzer@1.15.0">
+      <doNotScan>false</doNotScan>
+    </com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty>
+    <com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty plugin="naginator@1.17.1">
+      <optOut>false</optOut>
+    </com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>ECL_REVISION</name>
+          <description></description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+      <maxConcurrentPerNode>0</maxConcurrentPerNode>
+      <maxConcurrentTotal>0</maxConcurrentTotal>
+      <categories class="java.util.concurrent.CopyOnWriteArrayList"/>
+      <throttleEnabled>false</throttleEnabled>
+      <throttleOption>project</throttleOption>
+      <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+      <paramsToUseForLimit></paramsToUseForLimit>
+    </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+  </properties>
+  <scm class="hudson.scm.CustomSCM" plugin="customSCM@0.7.6">
+    <checkoutCommand>/build/home/ca_pscilrc/scripts/customscm-changelog.sh</checkoutCommand>
+    <calcRevisionCommand></calcRevisionCommand>
+    <compareRevisionCommand></compareRevisionCommand>
+    <repoBrowserURL></repoBrowserURL>
+  </scm>
+  <assignedNode>build</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder plugin="conditional-buildstep@1.3.3">
+      <condition class="org.jenkins_ci.plugins.run_condition.core.CauseCondition" plugin="run-condition@1.0">
+        <buildCause>UPSTREAM_CAUSE</buildCause>
+        <exclusiveCause>false</exclusiveCause>
+      </condition>
+      <buildStep class="hudson.plugins.copyartifact.CopyArtifact" plugin="copyartifact@1.38">
+        <project>PS_Release_Promo_MAINBRANCH_LRC</project>
+        <filter>ECL_revision_info.txt, ECL_revision_info.finger</filter>
+        <target></target>
+        <excludes></excludes>
+        <selector class="hudson.plugins.copyartifact.StatusBuildSelector"/>
+        <doNotFingerprintArtifacts>false</doNotFingerprintArtifacts>
+      </buildStep>
+      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0"/>
+    </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
+    <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder plugin="conditional-buildstep@1.3.3">
+      <condition class="org.jenkins_ci.plugins.run_condition.core.CauseCondition" plugin="run-condition@1.0">
+        <buildCause>USER_CAUSE</buildCause>
+        <exclusiveCause>false</exclusiveCause>
+      </condition>
+      <buildStep class="hudson.tasks.Shell">
+        <command>svn export https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/ECL/MAINBRANCH_LRC/ECL_HWAPI/ECL@$ECL_REVISION ECL
+svn info https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/ECL/MAINBRANCH_LRC/ECL_HWAPI -r $ECL_REVISION | egrep -v &apos;Repo|Revi|Text Last|Path&apos; &gt; ECL_revision_info.txt</command>
+      </buildStep>
+      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0"/>
+    </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+set -x
+
+#Make a parameter file
+echo ECL_REVISION=`egrep &apos;Last Changed Rev:&apos; ECL_revision_info.txt | sed &apos;s:[^0-9]::g&apos;` &gt; param_file
+</command>
+    </hudson.tasks.Shell>
+    <hudson.plugins.parameterizedtrigger.TriggerBuilder plugin="parameterized-trigger@2.30">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+          <configs>
+            <hudson.plugins.parameterizedtrigger.FileBuildParameters>
+              <propertiesFile>param_file</propertiesFile>
+              <failTriggerOnMissing>false</failTriggerOnMissing>
+              <useMatrixChild>false</useMatrixChild>
+              <onlyExactRuns>false</onlyExactRuns>
+            </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+          </configs>
+          <projects>PS_ReleaseTest_MCU_LRC_MAINBRANCH_LRC,PS_ReleaseTest_DSP_LRC_MAINBRANCH_LRC,PS_ReleaseTest_RT_LRC_SET2_MAINBRANCH_LRC,PS_ReleaseTest_RT_LRC_3G_MAINBRANCH_LRC,PS_ReleaseTest_RT_LRC_SET1_MAINBRANCH_LRC</projects>
+          <condition>ALWAYS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+          <block>
+            <buildStepFailureThreshold>
+              <name>FAILURE</name>
+              <ordinal>2</ordinal>
+              <color>RED</color>
+              <completeBuild>true</completeBuild>
+            </buildStepFailureThreshold>
+            <unstableThreshold>
+              <name>UNSTABLE</name>
+              <ordinal>1</ordinal>
+              <color>YELLOW</color>
+              <completeBuild>true</completeBuild>
+            </unstableThreshold>
+            <failureThreshold>
+              <name>FAILURE</name>
+              <ordinal>2</ordinal>
+              <color>RED</color>
+              <completeBuild>true</completeBuild>
+            </failureThreshold>
+          </block>
+          <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+        </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.TriggerBuilder>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>ECL_revision_info.txt, ECL_revision_info.finger</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>true</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.plugins.descriptionsetter.DescriptionSetterPublisher plugin="description-setter@1.10">
+      <regexp></regexp>
+      <regexpForFailed></regexpForFailed>
+      <description>$ECL_REVISION</description>
+      <setForMatrix>false</setForMatrix>
+    </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.3"/>
+  </buildWrappers>
+</project>

@@ -1,0 +1,54 @@
+<hudson.plugins.promoted__builds.PromotionProcess plugin="promoted-builds@2.27">
+  <actions />
+  <keepDependencies>false</keepDependencies>
+  <properties />
+  <scm class="hudson.scm.NullSCM" />
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers />
+  <concurrentBuild>false</concurrentBuild>
+  <conditions>
+    <hudson.plugins.promoted__builds.conditions.ManualCondition>
+      <users />
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>comment</name>
+          <description>Comment why manually approved</description>
+          <defaultValue />
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.plugins.promoted__builds.conditions.ManualCondition>
+  </conditions>
+  <icon>star-orange</icon>
+  <isVisible />
+  <buildSteps>
+    <hudson.tasks.Shell>
+      <command>export branch=FBLRC1613
+svn export --force https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/branches/ps_rel_ci/jenkins/scripts_lrc/CI2RMupdate.sh
+
+chmod +x CI2RMupdate.sh
+
+./CI2RMupdate.sh</command>
+    </hudson.tasks.Shell>
+    <hudson.plugins.groovy.SystemGroovy plugin="groovy@1.29">
+      <scriptSource class="hudson.plugins.groovy.FileScriptSource">
+        <scriptFile>update_promoted_job_description.groovy</scriptFile>
+      </scriptSource>
+      <bindings />
+      <classpath />
+    </hudson.plugins.groovy.SystemGroovy>
+    <hudson.plugins.parameterizedtrigger.TriggerBuilder plugin="parameterized-trigger@2.30">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+          <configs class="empty-list" />
+          <projects>PS_CI2RM_analyse_FBLRC1613</projects>
+          <condition>ALWAYS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+          <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+        </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.TriggerBuilder>
+  </buildSteps>
+</hudson.plugins.promoted__builds.PromotionProcess>

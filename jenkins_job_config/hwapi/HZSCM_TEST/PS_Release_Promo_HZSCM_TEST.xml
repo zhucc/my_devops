@@ -1,0 +1,251 @@
+<project>
+  <actions />
+  <description>PS libraries are available: \\oulinn10\build\home\ps_rel_ci\PS_CI_LIBS
+&lt;br&gt;
+LFS libraries are available: \\oulinn10\build\home\CI_LFS\RCversion\osgg</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.security.AuthorizationMatrixProperty>
+      <permission>hudson.model.Item.Read:anonymous</permission>
+      <permission>hudson.model.Item.ExtendedRead:anonymous</permission>
+    </hudson.security.AuthorizationMatrixProperty>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>180</daysToKeep>
+        <numToKeep>-1</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    <com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty plugin="build-failure-analyzer@1.15.0">
+      <doNotScan>false</doNotScan>
+    </com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty>
+    <com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty plugin="naginator@1.17.1">
+      <optOut>false</optOut>
+    </com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty>
+    <hudson.plugins.promoted__builds.JobPropertyImpl plugin="promoted-builds@2.27">
+      <activeProcessNames>
+        <string>MCU_TEST_ACCEPTED</string>
+        <string>PS_Promote</string>
+        <string>PS_Promote_FastTrack</string>
+        <string>DSP_TEST_ACCEPTED</string>
+        <string>PS_Promote_manual</string>
+      </activeProcessNames>
+    </hudson.plugins.promoted__builds.JobPropertyImpl>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.TextParameterDefinition>
+          <name>ECL_REVISION</name>
+          <description />
+          <defaultValue />
+        </hudson.model.TextParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+      <maxConcurrentPerNode>0</maxConcurrentPerNode>
+      <maxConcurrentTotal>0</maxConcurrentTotal>
+      <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+      <throttleEnabled>false</throttleEnabled>
+      <throttleOption>project</throttleOption>
+      <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+      <paramsToUseForLimit />
+    </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+  </properties>
+  <scm class="hudson.scm.CustomSCM" plugin="customSCM@0.7.6">
+    <checkoutCommand>/build/home/ca_pscilrc/scripts/customscm-changelog.sh</checkoutCommand>
+    <calcRevisionCommand />
+    <compareRevisionCommand />
+    <repoBrowserURL />
+  </scm>
+  <assignedNode>build</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers />
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder plugin="conditional-buildstep@1.3.3">
+      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0" />
+      <runCondition class="org.jenkins_ci.plugins.run_condition.core.CauseCondition" plugin="run-condition@1.0">
+        <buildCause>UPSTREAM_CAUSE</buildCause>
+        <exclusiveCause>false</exclusiveCause>
+      </runCondition>
+      <conditionalbuilders>
+        <hudson.plugins.copyartifact.CopyArtifact plugin="copyartifact@1.38">
+          <project>ECL_HWAPI_HZSCM_TEST</project>
+          <filter>ECL_HWAPI/ECL, ECL_revision_info.txt</filter>
+          <target />
+          <excludes />
+          <selector class="hudson.plugins.copyartifact.StatusBuildSelector" />
+          <flatten>true</flatten>
+          <doNotFingerprintArtifacts>false</doNotFingerprintArtifacts>
+        </hudson.plugins.copyartifact.CopyArtifact>
+      </conditionalbuilders>
+    </org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder>
+    <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder plugin="conditional-buildstep@1.3.3">
+      <condition class="org.jenkins_ci.plugins.run_condition.core.CauseCondition" plugin="run-condition@1.0">
+        <buildCause>USER_CAUSE</buildCause>
+        <exclusiveCause>false</exclusiveCause>
+      </condition>
+      <buildStep class="hudson.tasks.Shell">
+        <command>#!/bin/bash
+set -x
+#Make a parameter file
+#Workaround for some wierd revision
+ECLrev=$(echo ${ECL_REVISION})
+svn export $SVN_COMMAND https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/ECL/HZSCM_TEST/ECL_HWAPI/ECL@$ECLrev ECL
+svn info --non-interactive --trust-server-cert --username=ca_pscilrc --password=fCfYAXbr https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/ECL/HZSCM_TEST/ECL_HWAPI -r $ECLrev | egrep -v 'Repo|Revi|Text Last|Path' &gt; ECL_revision_info.txt</command>
+      </buildStep>
+      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0" />
+    </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+set -x
+
+export branch=HZSCM_TEST
+
+unset PYTHON_VERSION
+source /opt/python/x86_64/2.7.3/interface/startup/linsee.env
+#source /opt/xpath/linux/ix86/xpath_0.1/interface/startup/xpath_0.1.env
+
+#svn export --force https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/branches/ps_rel_ci/jenkins/scripts/PS_CI_Content.sh
+
+#./PS_CI_Content.sh
+
+svn export $SVN_COMMAND https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/branches/ps_rel_ci/jenkins/scripts_lrc/PSfinger.sh
+
+./PSfinger.sh
+
+#Because of bug in Jenkins own fingerprint file is needed here that promotions goes correct place
+cat ECL_revision_info.txt &gt; ECL_revision_info.finger
+echo "$BUILD_NUMBER" &gt;&gt; ECL_revision_info.finger
+
+
+#Make a parameter file
+echo ECL_REVISION=`egrep 'Last Changed Rev:' ECL_revision_info.txt | sed 's:[^0-9]::g'` &gt; param_file
+
+</command>
+    </hudson.tasks.Shell>
+    <hudson.plugins.parameterizedtrigger.TriggerBuilder plugin="parameterized-trigger@2.30">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+          <configs>
+            <hudson.plugins.parameterizedtrigger.FileBuildParameters>
+              <propertiesFile>param_file</propertiesFile>
+              <failTriggerOnMissing>false</failTriggerOnMissing>
+              <useMatrixChild>false</useMatrixChild>
+              <onlyExactRuns>false</onlyExactRuns>
+            </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+          </configs>
+          <projects>PS_StartupTest_LRC_HZSCM_TEST</projects>
+          <condition>ALWAYS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+          <block>
+            <buildStepFailureThreshold>
+              <name>FAILURE</name>
+              <ordinal>2</ordinal>
+              <color>RED</color>
+              <completeBuild>true</completeBuild>
+            </buildStepFailureThreshold>
+            <unstableThreshold>
+              <name>UNSTABLE</name>
+              <ordinal>1</ordinal>
+              <color>YELLOW</color>
+              <completeBuild>true</completeBuild>
+            </unstableThreshold>
+            <failureThreshold>
+              <name>UNSTABLE</name>
+              <ordinal>1</ordinal>
+              <color>YELLOW</color>
+              <completeBuild>true</completeBuild>
+            </failureThreshold>
+          </block>
+          <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+        </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.TriggerBuilder>
+  </builders>
+  <publishers>
+    <hudson.tasks.test.AggregatedTestResultPublisher plugin="junit@1.21">
+      <includeFailedBuilds>true</includeFailedBuilds>
+    </hudson.tasks.test.AggregatedTestResultPublisher>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>ECL, ECL_revision_info.txt, ECL_revision_info.finger</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>true</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.plugins.descriptionsetter.DescriptionSetterPublisher plugin="description-setter@1.10">
+      <regexp>^Description: (.*)</regexp>
+      <regexpForFailed />
+      <setForMatrix>false</setForMatrix>
+    </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
+    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.44">
+      <recipientList>$DEFAULT_RECIPIENTS</recipientList>
+      <configuredTriggers>
+        <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+          <email>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <recipientProviders>
+              <hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider />
+            </recipientProviders>
+            <attachmentsPattern />
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+      </configuredTriggers>
+      <contentType>default</contentType>
+      <defaultSubject>$DEFAULT_SUBJECT</defaultSubject>
+      <defaultContent>$DEFAULT_CONTENT</defaultContent>
+      <attachmentsPattern />
+      <presendScript>$DEFAULT_PRESEND_SCRIPT</presendScript>
+      <postsendScript>$DEFAULT_POSTSEND_SCRIPT</postsendScript>
+      <attachBuildLog>false</attachBuildLog>
+      <compressBuildLog>false</compressBuildLog>
+      <replyTo>$DEFAULT_REPLYTO</replyTo>
+      <saveOutput>false</saveOutput>
+      <disabled>false</disabled>
+    </hudson.plugins.emailext.ExtendedEmailPublisher>
+    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.30">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+          <configs class="empty-list" />
+          <projects>PS_Release_Promo_QUEUE_HZSCM_TEST</projects>
+          <condition>SUCCESS</condition>
+          <triggerWithNoParameters>true</triggerWithNoParameters>
+        </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.BuildTrigger>
+    <com.chikli.hudson.plugin.naginator.NaginatorPublisher plugin="naginator@1.17.1">
+      <regexpForRerun />
+      <rerunIfUnstable>true</rerunIfUnstable>
+      <rerunMatrixPart>false</rerunMatrixPart>
+      <checkRegexp>false</checkRegexp>
+      <regexpForMatrixStrategy>TestParent</regexpForMatrixStrategy>
+      <delay class="com.chikli.hudson.plugin.naginator.FixedDelay">
+        <delay>60</delay>
+      </delay>
+      <maxSchedule>3</maxSchedule>
+    </com.chikli.hudson.plugin.naginator.NaginatorPublisher>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.29">
+      <deleteDirs>false</deleteDirs>
+      <cleanupParameter />
+      <externalDelete />
+    </hudson.plugins.ws__cleanup.PreBuildCleanup>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.3" />
+  </buildWrappers>
+</project>

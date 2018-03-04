@@ -1,0 +1,301 @@
+<matrix-project plugin="matrix-project@1.11">
+  <actions />
+  <description>This job is for DSPHWAPI release testing. This job done tests for Extended test sets.</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>30</daysToKeep>
+        <numToKeep>-1</numToKeep>
+        <artifactDaysToKeep>7</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    <com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty plugin="build-failure-analyzer@1.15.0">
+      <doNotScan>false</doNotScan>
+    </com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty>
+    <com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty plugin="naginator@1.17.1">
+      <optOut>false</optOut>
+    </com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.TextParameterDefinition>
+          <name>ECL_REVISION</name>
+          <description />
+          <defaultValue />
+        </hudson.model.TextParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.CustomSCM" plugin="customSCM@0.7.6">
+    <checkoutCommand>/build/home/ca_pscilrc/scripts/customscm-changelog.sh</checkoutCommand>
+    <calcRevisionCommand />
+    <compareRevisionCommand />
+    <repoBrowserURL />
+  </scm>
+  <assignedNode>build</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers />
+  <concurrentBuild>false</concurrentBuild>
+  <axes>
+    <hudson.matrix.LabelAxis>
+      <name>slave</name>
+      <values>
+        <string>PSCI_MAIN_LSP_AXM_RTCCS_LTE</string>
+        <string>PSCI_MAIN_LSP_K2_RTCCS_LTE</string>
+      </values>
+    </hudson.matrix.LabelAxis>
+  </axes>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+if [ "$MANUAL_TRIGGER_JOB" == "true" ]; then
+	#Disable MCU SW dl, if triggered by a certain upstream job
+    echo ************************
+    echo Disabling MCU SW upgrade
+	export mcuSwDlFlag=YES
+    echo ************************
+    
+else
+	#Default value
+	export mcuSwDlFlag=YES   
+fi
+
+export branch=FBLRC1613
+export isThisLrc=YES
+
+export scriptDir=C_Platform/DSPHWAPI
+export mitDir=C_Platform/DSPHWAPI
+export use_runTests=YES
+
+export saveEnergySaveTheWorld=YES
+
+#Get a right ECL 
+if [ -d ECL ];then
+  rm -fr ECL
+fi
+#disable command prints
+set +x
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert --force https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/ECL/$branch/ECL_HWAPI -r $ECL_REVISION ECL
+echo ecl revision $ECL_REVISION
+svn info --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/ECL/$branch/ECL_HWAPI -r $ECL_REVISION | egrep -v 'Repo|Revi|Text Last|Path' &gt; ECL_revision_info.txt
+
+
+
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert --force https://svne1.access.nsn.com/isource/svnroot/BTS_T_PS_TOOLS/nibbles/branches/filelogger/trunk/tryme/nibbles_static
+
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/branches/ps_rel_ci/jenkins/scripts_lrc/DSPTargetTest.sh
+
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert --force https://svne1.access.nsn.com/isource/svnroot/LRC_SC_UPHWAPI/FBLRC1613/trunk/C_Platform/DSPHWAPI/TestScripts/Utils
+
+#These "connectedTargetRelayX" definitions comes from Jenkins Node config.
+echo "Relay parameters which are tied to Jenkins node:"
+if [ "$connectedTargetRelayNbr" != "" ]; then
+    export relayNbr=$connectedTargetRelayNbr
+else
+    export relayNbr=0
+fi
+
+if [ "$connectedTargetRelayType" != "" ]; then
+    export powerSwitchType=$connectedTargetRelayType
+else
+    export powerSwitchType=MOXA
+fi
+
+if [ "$connectedTargetRelayIP" != "" ]; then
+    export powerSwitchIp=$connectedTargetRelayIP
+else
+    export powerSwitchIp=192.168.255.254
+fi
+echo "Relay nbr:  " $connectedTargetRelayNbr
+echo "Relay type: " $connectedTargetRelayType
+echo "Relay IP:   " $connectedTargetRelayIP
+
+if [ "$slave" == "PSCI_MAIN_LSP_AXM_RTCCS_LTE" ]; then
+    export sendEmails=YES
+    export multipleFspSwDlFlag=NO
+    export isThisLrc=YES
+    #export skipTargetReset=YES
+    export swDlFepMode=YES
+    export needsAXMRTCCSTestCodes=YES
+    #export powerSwitchType=MOXA_INV
+    #export powerSwitchIp=ourdpsciv341:8080
+    export relayNbr=$connectedTargetRelayNbr
+    export binDirRtQt=C_Platform/DSPHWAPI/Bin/Nyquist
+    export binDirBwQt=C_Platform/DSPHWAPI/Bin/Nyquist
+    export zipDirRt=C_Platform/DSPHWAPI/Bin/Kepler
+    export zipDirBw=Out
+    echo "**** Powering on module..."
+    python Utils/RemotePowerSwitch.py --set=$relayNbr --state=1 --type=$powerSwitchType --ip=$powerSwitchIp
+    sleep 240
+    echo "*******************************"
+   ./DSPTargetTest.sh KEP LTE PSCI_MAIN_LSP_AXM_RTCCS_LTE --input=../../CCS_RT/TestCodes/ --testSetXml=../../CCS_RT/TestCodes/RT_Linux_Target_Quick_Regression_AXM.xml --preConf=./LRC/lrcLspAXMRecover.py --noInit --recoRetry=1
+
+
+elif [ "$slave" == "PSCI_MAIN_LSP_K2_RTCCS_LTE" ]; then
+    export sendEmails=YES
+    export multipleFspSwDlFlag=NO
+    export isThisLrc=YES
+    export swDlFepMode=YES
+    export needsRTCCSTestCodes=YES
+    #export powerSwitchType=MOXA_INV
+    #export powerSwitchIp=ourdpsciv341:8080
+    export relayNbr=$connectedTargetRelayNbr
+    export binDirRtQt=C_Platform/DSPHWAPI/Bin/Nyquist
+    export binDirBwQt=C_Platform/DSPHWAPI/Bin/Nyquist
+    export zipDirRt=C_Platform/DSPHWAPI/Bin/Kepler
+    export zipDirBw=Out
+    echo "**** Powering on module..."
+    python Utils/RemotePowerSwitch.py --set=$relayNbr --state=1 --type=$powerSwitchType --ip=$powerSwitchIp
+    sleep 240
+    echo "*******************************"
+    ./DSPTargetTest.sh KEP LTE PSCI_MAIN_LSP_K2_RTCCS_LTE --target=0x1200 --input=../../CCS_RT/TestCodes/ --testSetXml=../../CCS_RT/TestCodes/RT_Linux_Target_Quick_Regression_K2.xml --preConf=./LRC/lrcLspK2ArmRecover.py --noInit --recoRetry=1
+
+
+else
+    echo "testing under construction, slave: $slave"
+fi
+
+if [ "$sendEmails" == "YES" ]; then
+    svn export --non-interactive --trust-server-cert --username=ca_pscilrc --password=fCfYAXbr --force https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/branches/ps_rel_ci/jenkins/scripts_lrc/tcrs.py
+
+    python ./tcrs.py -s -x ./testdir/C_Platform/DSPHWAPI/TestScripts/"$slave"_results.xml -a ./testdir/C_Platform/DSPHWAPI/TestScripts/DSPHWAPI_CI_Contact_List.xml -i ${BUILD_ID} -t ${BUILD_TAG} -u ${BUILD_URL}
+fi</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+if [ -d testdir/C_Platform/DSPHWAPI/TestScripts/ ]; then
+    cd testdir/C_Platform/DSPHWAPI/TestScripts/
+    #svn export --username=ps_rel_ci --password=df116d19 --force --non-interactive --trust-server-cert https://svne1.access.nsn.com/isource/svnroot/BTS_T_PS_TOOLS/bollox/trunk/bollox_static
+    #./bollox_static $slave.log $slave.html
+    zip logs.zip *.log
+fi</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.plugins.postbuildtask.PostbuildTask plugin="postbuild-task@1.8">
+      <tasks>
+        <hudson.plugins.postbuildtask.TaskProperties>
+          <logTexts>
+            <hudson.plugins.postbuildtask.LogProperties>
+              <logText />
+              <operator>AND</operator>
+            </hudson.plugins.postbuildtask.LogProperties>
+          </logTexts>
+          <EscalateStatus>false</EscalateStatus>
+          <RunIfJobSuccessful>false</RunIfJobSuccessful>
+          <script>pkill -9 -f python</script>
+        </hudson.plugins.postbuildtask.TaskProperties>
+        <hudson.plugins.postbuildtask.TaskProperties>
+          <logTexts>
+            <hudson.plugins.postbuildtask.LogProperties>
+              <logText />
+              <operator>AND</operator>
+            </hudson.plugins.postbuildtask.LogProperties>
+          </logTexts>
+          <EscalateStatus>false</EscalateStatus>
+          <RunIfJobSuccessful>false</RunIfJobSuccessful>
+          <script />
+        </hudson.plugins.postbuildtask.TaskProperties>
+      </tasks>
+    </hudson.plugins.postbuildtask.PostbuildTask>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>testdir/C_Platform/DSPHWAPI/TestScripts/*results.xml, testdir/C_Platform/DSPHWAPI/TestScripts/*.html, testdir/C_Platform/DSPHWAPI/TestScripts/*.csv,  testdir/C_Platform/DSPHWAPI/TestScripts/*.zip, ECL_revision_info.txt, unit_logs.zip</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>true</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.junit.JUnitResultArchiver plugin="junit@1.21">
+      <testResults>testdir/C_Platform/DSPHWAPI/TestScripts/*results.xml</testResults>
+      <keepLongStdio>false</keepLongStdio>
+      <testDataPublishers>
+        <de.esailors.jenkins.teststability.StabilityTestDataPublisher plugin="test-stability@1.0" />
+      </testDataPublishers>
+      <healthScaleFactor>1.0</healthScaleFactor>
+      <allowEmptyResults>false</allowEmptyResults>
+    </hudson.tasks.junit.JUnitResultArchiver>
+    <hudson.tasks.Fingerprinter>
+      <targets>ECL_revision_info.txt</targets>
+    </hudson.tasks.Fingerprinter>
+    <hudson.plugins.descriptionsetter.DescriptionSetterPublisher plugin="description-setter@1.10">
+      <regexp />
+      <regexpForFailed />
+      <description>ECL:#$ECL_REVISION</description>
+      <descriptionForFailed>ECL:#$ECL_REVISION</descriptionForFailed>
+      <setForMatrix>true</setForMatrix>
+    </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
+    <hudson.plugins.ws__cleanup.WsCleanup plugin="ws-cleanup@0.29">
+      <patterns>
+        <hudson.plugins.ws__cleanup.Pattern>
+          <pattern />
+          <type>INCLUDE</type>
+        </hudson.plugins.ws__cleanup.Pattern>
+      </patterns>
+      <deleteDirs>false</deleteDirs>
+      <skipWhenFailed>false</skipWhenFailed>
+      <cleanWhenSuccess>true</cleanWhenSuccess>
+      <cleanWhenUnstable>true</cleanWhenUnstable>
+      <cleanWhenFailure>true</cleanWhenFailure>
+      <cleanWhenNotBuilt>true</cleanWhenNotBuilt>
+      <cleanWhenAborted>true</cleanWhenAborted>
+      <notFailBuild>false</notFailBuild>
+      <cleanupMatrixParent>false</cleanupMatrixParent>
+      <externalDelete />
+    </hudson.plugins.ws__cleanup.WsCleanup>
+    <hudson.tasks.Mailer plugin="mailer@1.17">
+      <recipients />
+      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>true</sendToIndividuals>
+    </hudson.tasks.Mailer>
+    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.30">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+          <configs>
+            <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+              <properties>BUILD_NUMBER=${BUILD_NUMBER}
+UP_PROJECT=PS_ReleaseTest_RT_LRC_SET2_FBLRC1613</properties>
+            </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+          </configs>
+          <projects>HWAPI_COOP_SCTCase_Upload</projects>
+          <condition>ALWAYS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+        </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.BuildTrigger>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.29">
+      <deleteDirs>false</deleteDirs>
+      <cleanupParameter />
+      <externalDelete />
+    </hudson.plugins.ws__cleanup.PreBuildCleanup>
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.16-INTEL-1">
+      <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
+        <timeoutMinutes>600</timeoutMinutes>
+      </strategy>
+      <operationList>
+        <hudson.plugins.build__timeout.operations.WriteDescriptionOperation>
+          <description />
+        </hudson.plugins.build__timeout.operations.WriteDescriptionOperation>
+      </operationList>
+    </hudson.plugins.build__timeout.BuildTimeoutWrapper>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.3" />
+    <matrixtieparent.BuildWrapperMtp plugin="matrixtieparent@1.2">
+      <labelName>build</labelName>
+    </matrixtieparent.BuildWrapperMtp>
+  </buildWrappers>
+  <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
+    <runSequentially>false</runSequentially>
+  </executionStrategy>
+</matrix-project>

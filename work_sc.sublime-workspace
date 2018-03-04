@@ -1,0 +1,1021 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"_get",
+				"_get_op\tfunction"
+			],
+			[
+				"s",
+				"split\tfunction"
+			],
+			[
+				"roo",
+				"rooturl\tstatement"
+			],
+			[
+				"for",
+				"format\tfunction"
+			],
+			[
+				"ds",
+				"dst_branch\tparam"
+			],
+			[
+				"vi",
+				"view_name\tparam"
+			],
+			[
+				"reconfig_j",
+				"reconfig_jobs_with_loacl_xml\tfunction"
+			],
+			[
+				"re",
+				"reconfig"
+			],
+			[
+				"ope",
+				"operator\tstatement"
+			],
+			[
+				"mod",
+				"modify_local_shells\tfunction"
+			],
+			[
+				"save_viw",
+				"save_view_jobs_config\tfunction"
+			],
+			[
+				"pa",
+				"path2save\tstatement"
+			],
+			[
+				"b",
+				"branch"
+			],
+			[
+				"bran",
+				"branch_path\tstatement"
+			],
+			[
+				"ex",
+				"existing"
+			],
+			[
+				"ba",
+				"branch\tstatement"
+			],
+			[
+				"root",
+				"rootpath"
+			],
+			[
+				"to",
+				"TOP_FUNCTION\tclass"
+			],
+			[
+				"spl",
+				"split"
+			],
+			[
+				"vie",
+				"view"
+			],
+			[
+				"xml",
+				"xmlpath"
+			],
+			[
+				"f",
+				"file\tclass"
+			],
+			[
+				"fi",
+				"files"
+			],
+			[
+				"bra",
+				"branch_src\tparam"
+			],
+			[
+				"v",
+				"view_name\tparam"
+			],
+			[
+				"jenkin",
+				"jenkins_url\tparam"
+			],
+			[
+				"j",
+				"jenkins\tmodule"
+			],
+			[
+				"x",
+				"xmlpath\tstatement"
+			],
+			[
+				"get_job",
+				"_get_jobs_by_view"
+			],
+			[
+				"get",
+				"get"
+			],
+			[
+				"node",
+				"node_name\tparam"
+			],
+			[
+				"job",
+				"jobname\tparam"
+			],
+			[
+				"exist",
+				"existing"
+			],
+			[
+				"xm",
+				"xmlfile\tstatement"
+			],
+			[
+				"jo",
+				"join\tfunction"
+			],
+			[
+				"file",
+				"filename\tstatement"
+			],
+			[
+				"dis",
+				"disable_job"
+			],
+			[
+				"fil",
+				"filename\tstatement"
+			],
+			[
+				"read",
+				"read_file\tfunction"
+			],
+			[
+				"a",
+				"append\tfunction"
+			],
+			[
+				"shell",
+				"shells\tstatement"
+			],
+			[
+				"ne",
+				"newname"
+			],
+			[
+				"str",
+				"string_list\tstatement"
+			],
+			[
+				"in",
+				"index\tforstmt"
+			],
+			[
+				"XM",
+				"XML_FCT\tclass"
+			],
+			[
+				"w",
+				"write\tfunction"
+			],
+			[
+				"se",
+				"self\tparam"
+			],
+			[
+				"com",
+				"command_elements\tstatement"
+			],
+			[
+				"it",
+				"iter\tfunction"
+			],
+			[
+				"src",
+				"src_file\tstatement"
+			],
+			[
+				"cp",
+				"copyfile\tfunction"
+			],
+			[
+				"sh",
+				"shutil\tmodule"
+			],
+			[
+				"name",
+				"name\tstatement"
+			],
+			[
+				"dir",
+				"directory\tstatement"
+			],
+			[
+				"sav",
+				"save_shell\tparam"
+			],
+			[
+				"mo",
+				"modify_one_xml\tfunction"
+			],
+			[
+				"con",
+				"config_xml\tstatement"
+			],
+			[
+				"sa",
+				"save_into_file\tfunction"
+			],
+			[
+				"comm",
+				"command_Elements"
+			],
+			[
+				"fin",
+				"findall\tfunction"
+			],
+			[
+				"tr",
+				"try\tTry/Except"
+			],
+			[
+				"op",
+				"operator\tstatement"
+			],
+			[
+				"che",
+				"check_jenkins\tclass"
+			],
+			[
+				"M",
+				"MyJenkins\tclass"
+			],
+			[
+				"d",
+				"disable_job\tfunction"
+			],
+			[
+				"al",
+				"all_LRC_test_jobs\tstatement"
+			],
+			[
+				"jenki",
+				"jenkins_op"
+			],
+			[
+				"get_view_",
+				"get_view_name\tfunction"
+			],
+			[
+				"all",
+				"all_view_jobs\tstatement"
+			],
+			[
+				"jenkins",
+				"jenkins_op\tstatement"
+			],
+			[
+				"open",
+				"open_jenkins\tclass"
+			],
+			[
+				"des",
+				"desktop_path\tstatement"
+			],
+			[
+				"sor",
+				"sort_file\tfunction"
+			],
+			[
+				"we",
+				"writelines\tfunction"
+			],
+			[
+				"lis",
+				"lista\tstatement"
+			],
+			[
+				"js",
+				"json\tmodule"
+			],
+			[
+				"val",
+				"Value\tforstmt"
+			],
+			[
+				"da",
+				"date_list\tstatement"
+			],
+			[
+				"va",
+				"Value\tforstmt"
+			],
+			[
+				"sr",
+				"server\tstatement"
+			],
+			[
+				"getj",
+				"get_job_name\tfunction"
+			],
+			[
+				"Jenkins",
+				"Jenkins\tclass"
+			],
+			[
+				"je",
+				"jenkins"
+			],
+			[
+				"jen",
+				"jenkins_config_info"
+			],
+			[
+				"e",
+				"e\ttrystmt"
+			],
+			[
+				"conf",
+				"config\tstatement"
+			],
+			[
+				"sc",
+				"sctions\tstatement"
+			],
+			[
+				"cong",
+				"configfile"
+			],
+			[
+				"__f",
+				"__func__\tinstance"
+			],
+			[
+				"nw",
+				"newLocalPath"
+			],
+			[
+				"new",
+				"newRestPath"
+			],
+			[
+				"svn",
+				"svnReposUrl"
+			],
+			[
+				"br",
+				"branchName"
+			],
+			[
+				"remo",
+				"remoteServer"
+			],
+			[
+				"du",
+				"dumps〔function〕"
+			],
+			[
+				"jas",
+				"jason_file〔variable〕"
+			],
+			[
+				"try",
+				"try\tTry/Except"
+			],
+			[
+				"te",
+				"test2"
+			],
+			[
+				"time",
+				"time_me"
+			],
+			[
+				"ca",
+				"caculate2"
+			],
+			[
+				"if",
+				"ifmain\tif __name__ == '__main__'"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "check_all_jobs.py",
+			"settings":
+			{
+				"buffer_size": 11169,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "Packages/Python/Python.sublime-build",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				]
+			],
+			[
+				"Packages/Makefile/Make.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 129.0,
+		"last_filter": "insTALL",
+		"selected_items":
+		[
+			[
+				"insTALL",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 593.0
+	},
+	"console":
+	{
+		"height": 174.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			"sublime.version()",
+			"import urllib.request,os; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); open(os.path.join(ipp, pf), 'wb').write(urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ','%20')).read())"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/D/userdata/robzhu/Desktop/work_script"
+	],
+	"file_history":
+	[
+		"/D/test/FBLRC1611/shell/DSP_Build_Store_Libraries_FBLRC1611_0.sh",
+		"/D/test/FBLRC1611/shell/ECL_BASE_FBLRC1611_0.sh",
+		"/D/test/MAINBRANCH_LRC/shell/DSP_Build_RT_MAINBRANCH_LRC_Coverity_0.sh",
+		"/C/Python27/Lib/site-packages/jenkins/__init__.py",
+		"/D/test/FBLRC1611/shell/ECL_MCU_Update_FBLRC1611_0.sh",
+		"/D/test/FBLRC1606/shell/DSP_Build_Promo_FBLRC1606_3.sh",
+		"/D/test/FBLRC1611/shell/DSP_Build_Store_Libraries_FBLRC1611_1.sh",
+		"/D/test/FBLRC1611/shell/DSP_Build_Kep_LRC_FBLRC1611_0.sh",
+		"/D/test/FBLRC1611/shell/DSP_Build_Promo_FBLRC1611_2.sh",
+		"/D/test/FBLRC1611/shell/DSP_Build_Promo_FBLRC1611_3.sh",
+		"/D/test/FBLRC1611/shell/DSP_Build_RT_FBLRC1611_0.sh",
+		"/D/test/FBLRC1611/shell/DSP_Build_RT_FBLRC1611_1.sh",
+		"/D/test/FBLRC1611/shell/ECL_HWAPI_FBLRC1611_0.sh",
+		"/D/userdata/robzhu/Desktop/FBLRC1606/shell/DSP_Build_RT_FBLRC1606_0.sh",
+		"/D/userdata/robzhu/Desktop/FBLRC1606/PS_Release_Promo_FBLRC1606.xml",
+		"/D/userdata/robzhu/Application Data/Sublime Text 3/Packages/Anaconda/Anaconda.sublime-settings",
+		"/D/userdata/robzhu/Application Data/Sublime Text 3/Packages/Anaconda/Default (Windows).sublime-keymap",
+		"/D/userdata/robzhu/Desktop/FBLRC1606/DSP_Build_RT_FBLRC1606.xml",
+		"/C/Python27/lib/shutil.py",
+		"/D/test/FBLRC1512/DSP_Build_Promo_FBLRC1512.xml",
+		"/D/userdata/robzhu.pem",
+		"/C/Python27/Lib/site-packages/jenkins/version.py",
+		"/D/userdata/robzhu/Desktop/FBLRC1606/shell/DSP_Build_RT_FBLRC1606_3.sh",
+		"/D/userdata/robzhu/Desktop/FBLRC1606/shell/DSP_Build_Promo_FBLRC1606_3.sh",
+		"/D/userdata/robzhu/Desktop/FBLRC1606/shell/DSP_Build_Kep_LRC_FBLRC1606_0.sh",
+		"/D/userdata/robzhu/Desktop/FBLRC1606/DSP_Build_Promo_FBLRC1606.xml",
+		"/D/userdata/robzhu/Desktop/FBLRC1606/DSP_Build_Kep_LRC_FBLRC1606.xml",
+		"/D/userdata/robzhu/Desktop/FBLRC1611/shell/DSP_Build_Promo_FBLRC1611_3.sh",
+		"/D/userdata/robzhu/Desktop/FBLRC1611/shell/DSP_Build_Kep_LRC_FBLRC1611_0.sh",
+		"/D/userdata/robzhu/Desktop/FBLRC1606/shell/DSP_Build_Store_Libraries_FBLRC1606_0.sh",
+		"/D/userdata/robzhu/Desktop/FBLRC1606/shell/DSP_Build_Promo_FBLRC1606_2.sh",
+		"/D/userdata/robzhu/Desktop/FBLRC1606/shell/DSP_Build_Kep_LRC_FBLRC1606_1.sh",
+		"/D/userdata/robzhu/Desktop/FBLRC1606/shell/DSP_Build_Promo_FBLRC1606_1.sh",
+		"/D/userdata/robzhu/Desktop/FBLRC1611/shell/DSP_Build_Promo_FBLRC1611_0.sh",
+		"/D/userdata/robzhu/Desktop/FBLRC1611/shell/DSP_Build_Kep_LRC_FBLRC1611_1.sh",
+		"/D/userdata/robzhu/Desktop/work_script/configfile.conf",
+		"/D/userdata/robzhu/Desktop/FBLRC1611/shell/ECL_BASE_FBLRC1611_0.sh",
+		"/D/userdata/robzhu/Desktop/FBLRC1611/shell/DSP_Build_Store_Libraries_FBLRC1611_1.sh",
+		"/D/userdata/robzhu/Desktop/hwapi_job_config/DSP_Build_Kep_LRC_FBLRC1611(2).sh",
+		"/D/userdata/robzhu/Desktop/FBLRC1611/MCU_Build_Promo_FBLRC1611_0.sh",
+		"/D/userdata/robzhu/Desktop/work_script/MCU_Build_Promo_FBLRC1611.xml",
+		"/D/userdata/robzhu/Desktop/work_script/make_graph.py",
+		"/D/userdata/robzhu/Desktop/work_script/check_all_jobs.py",
+		"/D/userdata/robzhu/Desktop/work_script/json2txt.py",
+		"/D/userdata/robzhu/Desktop/error_sc.txt",
+		"/D/userdata/robzhu/Desktop/work_script/sort_file.py",
+		"/D/userdata/robzhu/Desktop/ecl_mcu.txt",
+		"/D/userdata/robzhu/Desktop/ecl_dsp.txt",
+		"/D/userdata/robzhu/Desktop/ecl_ccs.txt",
+		"/D/userdata/robzhu/Desktop/ecl_ccs_2.txt",
+		"/D/userdata/robzhu/Desktop/New Text Document.txt",
+		"/D/userdata/robzhu/Desktop/work_script/ecl_ccs.txt",
+		"/D/userdata/robzhu/Desktop/work_script/ecl_ccs_2.txt",
+		"/D/userdata/robzhu/Desktop/work_script/a",
+		"/D/userdata/robzhu/Desktop/work_script/a.txt",
+		"/D/userdata/robzhu/Desktop/work_script/check_working_jenkins.py",
+		"/D/userdata/robzhu/Desktop/work_script/test_job_state/json2txt.py",
+		"/D/userdata/robzhu/Desktop/work_script/test_job_state/json11totxt",
+		"/C/Python27/Lib/site-packages/python_jenkins-0.4.13.dist-info/DESCRIPTION.rst",
+		"/D/userdata/robzhu/Desktop/wait_1606.py",
+		"/D/userdata/robzhu/Desktop/check_1606.py",
+		"/D/userdata/robzhu/Desktop/work_script/config.py",
+		"/C/Python27/Lib/ConfigParser.py",
+		"/D/userdata/robzhu/Application Data/Sublime Text 3/Packages/User/Anaconda.sublime-settings",
+		"/D/userdata/robzhu/Desktop/work_script/configfile",
+		"/D/userdata/robzhu/Desktop/work_script/config",
+		"/D/userdata/robzhu/Application Data/Sublime Text 3/Packages/SublimeTmpl/Default.sublime-commands",
+		"/D/userdata/robzhu/Application Data/Sublime Text 3/Packages/SublimeTmpl/SublimeTmpl.sublime-settings",
+		"/D/userdata/robzhu/Application Data/Sublime Text 3/Packages/SublimeTmpl/templates/python.tmpl",
+		"/D/userdata/robzhu/Application Data/Sublime Text 3/Packages/SublimeTmpl/Main.sublime-menu",
+		"/D/userdata/robzhu/Application Data/Sublime Text 3/Packages/User/SublimeTmpl.sublime-settings",
+		"/D/userdata/robzhu/Application Data/Sublime Text 3/Packages/SublimeTmpl/Default (Windows).sublime-keymap",
+		"/D/userdata/robzhu/Application Data/Sublime Text 3/Packages/SublimeREPL/README.md",
+		"/D/userdata/robzhu/Application Data/Sublime Text 3/Packages/User/Default (Windows).sublime-keymap",
+		"/D/userdata/robzhu/Desktop/lfs_ci_robzhu/lib/subversion.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_robzhu/lib/uc_release_upload_to_svn.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_robzhu/lib/uc_release_create_source_tag.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_robzhu/lib/release.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_robzhu/lib/artifacts.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_robzhu/lib/common.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_robzhu/lib/uc_ready_for_release.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_robzhu/etc/branches.cfg",
+		"/D/userdata/robzhu/Desktop/lfs_ci_robzhu/etc/global.cfg",
+		"/D/userdata/robzhu/Desktop/lfs_ci_robzhu/lib/uc_ecl.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_robzhu/etc/subversion.cfg",
+		"/D/userdata/robzhu/Desktop/lfs_ci_robzhu/etc/uc_release.cfg",
+		"/D/userdata/robzhu/Desktop/lfs_ci_robzhu/lib/uc_release.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_robzhu/lib/uc_release_create_rel_tag.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/lib/artifacts.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/lib/common.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_robzhu/etc/uc_package.cfg",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/lib/uc_ready_for_release.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/bin/jenkins-ci-execute-job.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/lib/createWorkspace.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_robzhu/New Text Document.py",
+		"/C/Users/robzhu/AppData/Local/Microsoft/Windows/Temporary Internet Files/Content.IE5/GKUWEWI2/test_log_of_rob",
+		"/D/userdata/robzhu/Desktop/ci.20161130091222.linsee-opsw06.ca_hzpsscm.LFS_CI_-_LRC_-_Wait_for_release.0.complete.log",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/LFS_CI_ROOT/etc/uc_package.cfg",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/lib/uc_release_create_source_tag.sh",
+		"/C/Users/robzhu/AppData/Local/Temp/fz3temp-1/createWorkspace.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/bin/getConfig",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/lib/perl/Nokia/Command/GetConfig.pm",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/lib/uc_release.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/lib/release.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/lib/createWorkspace_20161025.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/release.cfg",
+		"/D/userdata/robzhu/Desktop/ci.20161128113928.hzling29.ca_lrcci.LFS_Prod_-_LRC_-_Releasing_-_create_source_tag.0.complete.log",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/lib/jenkins.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/lib/common_20161022_lpf.sh",
+		"/C/Users/robzhu/AppData/Local/Temp/svn_data_FBLRC_PS_MCUHWAPI_BUILD_2016_11_031.txt",
+		"/C/Users/robzhu/AppData/Local/Temp/PS_DSPHWAPI_Information.txt",
+		"/C/Users/robzhu/AppData/Local/Temp/PSREL_partlist.txt",
+		"/C/Users/robzhu/AppData/Local/Microsoft/Windows/Temporary Internet Files/Content.Outlook/M08TIXUD/PS TT plan (002).mpp",
+		"/D/userdata/robzhu/Desktop/cbts_rcpPSI (002).py",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/lib/startup.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/lib/subversion.sh",
+		"/D/userdata/robzhu/Desktop/ccs/build.sh",
+		"/D/userdata/robzhu/Desktop/ccs/promote.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/lib/config.sh",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/lib/uc_release_create_source_tag_20161026_lpf.sh",
+		"/D/userdata/robzhu/Desktop/DSP_FE/branchout/commonTools/parseProperty.py",
+		"/D/userdata/robzhu/Desktop/aa.py",
+		"/D/userdata/robzhu/Desktop/DSP_FE/DSP_FE/__init__.py",
+		"/D/userdata/robzhu/Desktop/DSP_FE/manage.py",
+		"/D/userdata/robzhu/Desktop/DSP_FE/new.txt",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/LFS_CI_ROOT/etc/ddal.cfg",
+		"/D/userdata/robzhu/Desktop/lfs_ci_hz/LFS_CI_ROOT/etc/uc_release.cfg",
+		"/C/Users/robzhu/AppData/Local/Temp/360zip$Temp/360$1/oldLabel"
+	],
+	"find":
+	{
+		"height": 43.0
+	},
+	"find_in_files":
+	{
+		"height": 102.0,
+		"where_history":
+		[
+			"D:\\test\\MAINBRANCH_LRC\\shell",
+			"C:\\Python27\\Lib\\site-packages\\jenkinsapi",
+			"C:\\Python27\\Lib\\site-packages\\jenkins",
+			"D:\\test\\FBLRC1606\\shell",
+			"D:\\test\\FBLRC1606",
+			"D:\\test\\FBLRC1611\\shell",
+			"D:\\test\\FBLRC1606",
+			"D:\\test\\FBLRC1606\\shell",
+			"D:\\test\\FBLRC1512\\shell",
+			"D:\\test\\FBLRC1611\\shell",
+			"D:\\test\\FBLRC1512\\shell",
+			"D:\\test\\FBLRC1611\\shell",
+			"D:\\test\\FBLRC1512\\shell",
+			"D:\\test\\FBLRC1611\\shell",
+			"D:\\test\\FBLRC1611",
+			"C:\\Python27\\Lib\\site-packages\\jenkins",
+			"D:\\userdata\\robzhu\\Desktop\\FBLRC1606\\shell",
+			"D:\\userdata\\robzhu\\Desktop\\FBLRC1611\\shell",
+			"D:\\userdata\\robzhu\\Desktop\\FBLRC1606",
+			"D:\\userdata\\robzhu\\Desktop\\lfs_ci_robzhu\\etc",
+			"D:\\userdata\\robzhu\\Desktop\\lfs_ci_hz\\LFS_CI_ROOT",
+			"D:\\userdata\\robzhu\\Desktop\\lfs_ci_hz\\lib",
+			"D:\\userdata\\robzhu\\Desktop\\lfs_ci_hz\\LFS_CI_ROOT",
+			"D:\\userdata\\robzhu\\Desktop\\lfs_ci_hz",
+			"D:\\userdata\\robzhu\\Desktop\\lfs_ci_hz\\LFS_CI_ROOT",
+			"D:\\userdata\\robzhu\\Desktop\\lfs_ci_hz",
+			"D:\\userdata\\robzhu\\Desktop\\lfs_ci_hz\\LFS_CI_ROOT\\etc",
+			"D:\\userdata\\robzhu\\Desktop\\lfs_ci_hz\\LFS_CI_ROOT",
+			"D:\\userdata\\robzhu\\Desktop\\lfs_ci_hz\\LFS_CI_ROOT\\etc",
+			"D:\\userdata\\robzhu\\Desktop\\lfs_ci_hz",
+			"D:\\userdata\\robzhu\\Desktop\\lfs_ci_hz\\lib",
+			"D:\\userdata\\robzhu\\Desktop\\lfs_ci_hz",
+			"D:\\userdata\\robzhu\\My Documents\\lfs-ci"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"--username=ps_rel_ci",
+			"ps_rel_ci",
+			"error",
+			"save_job_config",
+			"description",
+			"reconfig",
+			"desc",
+			"rec",
+			"set",
+			"build",
+			"MY_JENKINS",
+			"1611",
+			"1606",
+			"BTS_SCM_PS",
+			"cd",
+			"Transfer to ulling08 failed",
+			"1611",
+			"1512",
+			"1611",
+			"1611\\",
+			"1512",
+			"1611",
+			"branch",
+			"FBLRC1611",
+			"1611",
+			"modify_local_shells",
+			"1606",
+			"ignore_url_list",
+			"shell",
+			"get_path_according_view",
+			"viewname",
+			"branch_dst",
+			"branch_src",
+			"path2save",
+			"save_view_jobs_shell",
+			"_get_jobs_by_view",
+			"DSP_Build_RT_FBLRC1606_*",
+			"DSP_Build_RT_FBLRC1606_*.sh",
+			"get_shells",
+			"XML_FCT",
+			"files",
+			"modify_xml_shell",
+			"xmlpath",
+			"file_path",
+			"filepath",
+			"file_path",
+			"Test",
+			"create",
+			"disable",
+			"Possibly authentication failed",
+			"filename",
+			"MyJenkins",
+			"view_name",
+			"MyJenkins",
+			"command",
+			"check_all_url",
+			"get_command_elements",
+			"modify_one_xml",
+			"$SVN_command",
+			"$SVN_com",
+			"$SVN_commad",
+			"svn_command",
+			"svnpath",
+			"SVN_COMMAND",
+			"command_Elements",
+			"job",
+			"i",
+			"txt_filename",
+			"last",
+			"jsonfilename",
+			"txtfilename",
+			"jsonfile",
+			"Value",
+			"h",
+			"haha",
+			"Release -",
+			"The project is either disabled or the configuration has not been saved yet.",
+			"The project is either disabled",
+			"Skipping",
+			"escription",
+			"LFS_CI_uc_update_ecl_url",
+			"LFS_CI_usecase_file",
+			"10.140.87.196/lfs/ca_lrccidev/svnClone/workingCopy/os/trunk",
+			"/lfs/ca_lrccidev/svnClone/workingCopy/os/trunk",
+			"LFS_CI_prepare_workspace_required_artifacts",
+			"svnMasterServerHostName",
+			"pre_",
+			"svnMasterServerHostName",
+			"LFS_PROD_svn_delivery_repos_name ",
+			"LFS_PROD_svn_delivery_repos_name",
+			"LFS_PROD_svn_delivery_release_repos_url",
+			"lrcpsscm",
+			"svnSlaveServerUlmHostName",
+			"LFS_PROD_svn_delivery_release_repos_url",
+			"LFS_PROD_uc_release_upload_to_subversion_map_location_to_branch",
+			"debug",
+			"LFS_PROD_svn_delivery_release_repos_url",
+			"ca_hzpsscm/svnClone/deliveryRepos/",
+			"svnSlaveServerUlmHostName",
+			"LFS_PROD_svn_delivery_release_repos_url",
+			"mustExistBranchInSubversion",
+			"LFS_PROD_svn_delivery_release_repos_url",
+			"/var/fpwork/ca_hzpsscm/svnClone",
+			"LFS_PROD_uc_release_upload_to_subversion_map_location_to_branch",
+			"svnSlaveServerUlmHostName",
+			"LFS_PROD_svn_delivery_release_repos_url",
+			"LFS_CI_UC_package_copy_to_share_real_location",
+			"level_A",
+			"svnMasterServerHostName",
+			"lfsSourceRepos",
+			"22222222",
+			"LFS_CI_INTERNAL_RERUN_ENVIRONMENT_FILE",
+			"#   ",
+			"LFS_CI_Ulm_server",
+			"LFS_CI_UC_package_copy_to_share_real_location",
+			"opt_noCleanWorkspace",
+			"INFO",
+			"LFS_CI_usecase_file",
+			"LFS_CI_INTERNAL_RERUN_ENVIRONMENT_FILE",
+			"LFS_CI_UC_package_copy_to_share_real_location_in_Hangzhou",
+			"3370",
+			"lte",
+			"33",
+			"337",
+			"LFS_PROD_RELEASE_CURRENT_TAG_NAME",
+			"opt_noBuildDescription",
+			"checkout_last_release_package",
+			"jenkinsMasterServerHostName"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "check_all_jobs.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11169,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10684,
+								10684
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": ".",
+									"selector": "source.python - string - comment - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								}
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 7848.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 32.0
+	},
+	"input":
+	{
+		"height": 36.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.autopep8":
+	{
+		"height": 142.0
+	},
+	"output.exec":
+	{
+		"height": 181.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.sftp":
+	{
+		"height": 160.0
+	},
+	"output.unsaved_changes":
+	{
+		"height": 142.0
+	},
+	"pinned_build_system": "Packages/Python/Python.sublime-build",
+	"project": "work_sc.sublime-project",
+	"replace":
+	{
+		"height": 60.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 625.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"D:\\userdata\\robzhu\\Desktop\\lfs-lcp\\lfs-lcp.sublime-project"
+			]
+		],
+		"width": 475.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 422.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

@@ -1,0 +1,152 @@
+<project>
+  <actions />
+  <description />
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>3</daysToKeep>
+        <numToKeep>20</numToKeep>
+        <artifactDaysToKeep>7</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    <com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty plugin="build-failure-analyzer@1.15.0">
+      <doNotScan>false</doNotScan>
+    </com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty>
+    <com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty plugin="naginator@1.17.1">
+      <optOut>false</optOut>
+    </com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>BRANCH</name>
+          <description />
+          <defaultValue />
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>PROMO_BUILD</name>
+          <description />
+          <defaultValue />
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.CustomSCM" plugin="customSCM@0.7.6">
+    <checkoutCommand>/build/home/ca_pscilrc/scripts/customscm-changelog.sh</checkoutCommand>
+    <calcRevisionCommand />
+    <compareRevisionCommand />
+    <repoBrowserURL />
+  </scm>
+  <assignedNode>build</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers />
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+$HWAPI_SCRIPT_DIR/bin/project_MCU_Build_Rel3_LRC_LSP.sh</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.plugins.warnings.WarningsPublisher plugin="warnings@4.56">
+      <healthy />
+      <unHealthy />
+      <thresholdLimit>low</thresholdLimit>
+      <pluginName>[WARNINGS] </pluginName>
+      <defaultEncoding />
+      <canRunOnFailed>false</canRunOnFailed>
+      <usePreviousBuildAsReference>false</usePreviousBuildAsReference>
+      <useStableBuildAsReference>false</useStableBuildAsReference>
+      <useDeltaValues>false</useDeltaValues>
+      <thresholds plugin="analysis-core@1.78">
+        <unstableTotalAll />
+        <unstableTotalHigh />
+        <unstableTotalNormal />
+        <unstableTotalLow />
+        <unstableNewAll />
+        <unstableNewHigh />
+        <unstableNewNormal />
+        <unstableNewLow />
+        <failedTotalAll />
+        <failedTotalHigh />
+        <failedTotalNormal />
+        <failedTotalLow />
+        <failedNewAll />
+        <failedNewHigh />
+        <failedNewNormal />
+        <failedNewLow />
+      </thresholds>
+      <shouldDetectModules>false</shouldDetectModules>
+      <dontComputeNew>true</dontComputeNew>
+      <doNotResolveRelativePaths>true</doNotResolveRelativePaths>
+      <includePattern />
+      <excludePattern />
+      <messagesPattern />
+      <parserConfigurations>
+        <hudson.plugins.warnings.ParserConfiguration>
+          <pattern>MCU_trunk/Tbts/tbts.compilation</pattern>
+          <parserName>GNU Make + GNU C Compiler (gcc)</parserName>
+        </hudson.plugins.warnings.ParserConfiguration>
+      </parserConfigurations>
+      <consoleParsers>
+        <hudson.plugins.warnings.ConsoleParser>
+          <parserName>GNU Make + GNU C Compiler (gcc)</parserName>
+        </hudson.plugins.warnings.ConsoleParser>
+      </consoleParsers>
+    </hudson.plugins.warnings.WarningsPublisher>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>MCU_revision_info.txt, artifacts.zip, changelog.xml, MCU_trunk/ECL/ECL, MCU_trunk/emake.data</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>true</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+    <jenkins.plugins.displayupstreamchanges.DisplayUpstreamChangesRecorder plugin="display-upstream-changes@0.3.2" />
+    <hudson.plugins.postbuildtask.PostbuildTask plugin="postbuild-task@1.8">
+      <tasks>
+        <hudson.plugins.postbuildtask.TaskProperties>
+          <logTexts>
+            <hudson.plugins.postbuildtask.LogProperties>
+              <logText>1</logText>
+              <operator>OR</operator>
+            </hudson.plugins.postbuildtask.LogProperties>
+            <hudson.plugins.postbuildtask.LogProperties>
+              <logText>a</logText>
+              <operator>AND</operator>
+            </hudson.plugins.postbuildtask.LogProperties>
+          </logTexts>
+          <EscalateStatus>false</EscalateStatus>
+          <RunIfJobSuccessful>false</RunIfJobSuccessful>
+          <script># coop mongo db posting scripts 
+svn export --force --username=ca_pscilrc--password=fCfYAXbr--non-interactive --trust-server-cert https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/branches/ps_rel_ci/jenkins/scripts_lrc/json_post_to_mongo_db.sh
+svn export --force --username=ca_pscilrc--password=fCfYAXbr--non-interactive --trust-server-cert https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/branches/ps_rel_ci/jenkins/scripts_lrc/run_posting_script.sh
+
+./run_posting_script.sh $JOB_NAME PS_MCUHWAPI build
+</script>
+        </hudson.plugins.postbuildtask.TaskProperties>
+      </tasks>
+    </hudson.plugins.postbuildtask.PostbuildTask>
+    <hudson.tasks.Fingerprinter>
+      <targets>MCU_revision_info.txt</targets>
+    </hudson.tasks.Fingerprinter>
+    <hudson.tasks.Mailer plugin="mailer@1.17">
+      <recipients>steve.west@nsn.com, murtaza.merali@nsn.com, manish.desai@nsn.com, peng.6.wang@nsn.com, lh.wang@nsn.com, xianlong.xie@nsn.com, guojie.zang@nsn.com, huafeng.f.jin@nsn.com</recipients>
+      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>false</sendToIndividuals>
+    </hudson.tasks.Mailer>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.3" />
+  </buildWrappers>
+</project>

@@ -1,0 +1,228 @@
+<project>
+  <actions />
+  <description>First test level for PS release. If this passes, PS_TRUNK will be marked with purple star
+&lt;br/&gt;
+&lt;br/&gt;
+&lt;img src="http://10.140.19.16:8080/job/PS_StartupTest_LRC_FBLRC1613/plot/getPlot?index=0&amp;width=500&amp;height=400"&gt;</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>30</daysToKeep>
+        <numToKeep>-1</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    <com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty plugin="build-failure-analyzer@1.15.0">
+      <doNotScan>false</doNotScan>
+    </com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty>
+    <com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty plugin="naginator@1.17.1">
+      <optOut>false</optOut>
+    </com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.TextParameterDefinition>
+          <name>ECL_REVISION</name>
+          <description />
+          <defaultValue />
+        </hudson.model.TextParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+      <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+      <throttleEnabled>false</throttleEnabled>
+      <throttleOption>project</throttleOption>
+      <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+      <paramsToUseForLimit />
+    </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+  </properties>
+  <scm class="hudson.scm.CustomSCM" plugin="customSCM@0.7.6">
+    <checkoutCommand>/build/home/ca_pscilrc/scripts/customscm-changelog.sh</checkoutCommand>
+    <calcRevisionCommand />
+    <compareRevisionCommand />
+    <repoBrowserURL />
+  </scm>
+  <assignedNode>LRC_Startup_MAIN</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers />
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert https://svne1.access.nsn.com/isource/svnroot/BTS_T_PS_TOOLS/ReserveItPy/trunk/ ReserveIt 
+
+
+#echo "Starting Serial Port loggers" 
+#ssh -o ConnectTimeout=120 hwr@192.168.255.87 -i /home/psci/.ssh/hwr_id_rsa "sudo logrotate -f /etc/logrotate.d/conserver-server"
+#ssh -o ConnectTimeout=120 hwr@192.168.255.87 -i /home/psci/.ssh/hwr_id_rsa "sudo rm /var/log/conserver/*.gz"
+
+echo "properties = { 'server_ip_address':'10.140.19.16'," &gt; ReserveIt/Properties.py
+echo "               'server_port':'59108'," &gt;&gt; ReserveIt/Properties.py
+echo "               'own_name':'LRC_STARTUP_${branch}}'," &gt;&gt; ReserveIt/Properties.py
+echo "               'subnet':'192.168.255'}" &gt;&gt; ReserveIt/Properties.py
+sleep 5
+
+python ReserveIt/ReserveItClient.py -t $test_env Reserve || exit 1
+python ReserveIt/ReserveItClient.py -t $test_env Off
+
+python ReserveIt/ReserveItClient.py -t $test_env --timeout 240 On Connect || exit 1</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>#!/bin/sh
+mkdir -p /home/psci/jenkins/workspace/PS_StartupTest_LRC_LOOP/console_logs
+
+#no swdl if this is set
+export execute_tests_only=no
+
+export branch=FBLRC1613
+export ip=192.168.255.1
+
+#Get a right ECL 
+if [ -d ECL ];then
+  rm -fr ECL
+fi
+if [ "$execute_tests_only" != "yes" ]; then
+  svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert --force https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/ECL/$branch/ECL_HWAPI -r $ECL_REVISION ECL
+  echo ecl revision $ECL_REVISION
+  svn info --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/ECL/$branch/ECL_HWAPI -r $ECL_REVISION | egrep -v 'Repo|Revi|Text Last|Path' &gt; ECL_revision_info.txt
+fi
+
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert --force https://svne1.access.nsn.com/isource/svnroot/BTS_T_PS_TOOLS/nibbles/branches/filelogger/trunk/bin/nibbles_static
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert --force https://svne1.access.nsn.com/isource/svnroot/LRC_SC_UPHWAPI/$branch/trunk/C_Platform/DSPHWAPI/TestScripts/Utils ./testdir/Utils
+
+
+cd $WORKSPACE
+
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert --force https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/branches/ps_rel_ci/jenkins/scripts_lrc/PS_CI_Startup_test_LRC_execute.sh
+svn export --username=ca_pscilrc --password=fCfYAXbr --non-interactive --trust-server-cert https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/branches/ps_rel_ci/jenkins/scripts_lrc/fetch_lrc_logs.sh
+chmod -R 777 *
+
+$WORKSPACE/PS_CI_Startup_test_LRC_execute.sh; let test_result=$?
+
+cp $WORKSPACE/*.log $WORKSPACE/testdir/results
+cp $WORKSPACE/*.tgz $WORKSPACE/testdir/results
+
+#Make a parameter file
+echo ECL_REVISION=$ECL_REVISION &gt; param_file
+
+exit $test_result</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.plugins.postbuildtask.PostbuildTask plugin="postbuild-task@1.8">
+      <tasks>
+        <hudson.plugins.postbuildtask.TaskProperties>
+          <logTexts>
+            <hudson.plugins.postbuildtask.LogProperties>
+              <logText />
+              <operator>AND</operator>
+            </hudson.plugins.postbuildtask.LogProperties>
+          </logTexts>
+          <EscalateStatus>false</EscalateStatus>
+          <RunIfJobSuccessful>false</RunIfJobSuccessful>
+          <script>#!/bin/bash
+
+SSH_OPTIONS="-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10"
+
+
+
+python ReserveIt/ReserveItClient.py -t $test_env Free</script>
+        </hudson.plugins.postbuildtask.TaskProperties>
+      </tasks>
+    </hudson.plugins.postbuildtask.PostbuildTask>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>ECL/ECL, ECL_revision_info.txt,testdir/results/*, console_logs.tgz, unit_logs.tgz, testdir/StartupLRC/startup_time_measurement.xml</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>true</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.plugins.plot.PlotPublisher plugin="plot@1.9">
+      <plots>
+        <hudson.plugins.plot.Plot>
+          <title>Startup time (ready state)</title>
+          <yaxis>Time (s)</yaxis>
+          <series>
+            <hudson.plugins.plot.XMLSeries>
+              <file>testdir/StartupLRC/startup_time_measurement.xml</file>
+              <label />
+              <fileType>xml</fileType>
+              <xpathString />
+              <url />
+              <nodeTypeString>NODESET</nodeTypeString>
+            </hudson.plugins.plot.XMLSeries>
+            <hudson.plugins.plot.XMLSeries>
+              <file>testdir/StartupLRC/startup_time_measurement.xml</file>
+              <label />
+              <fileType>xml</fileType>
+              <xpathString>/startup_time_measurement/ping</xpathString>
+              <url>$BUILD_URL</url>
+              <nodeTypeString>NODESET</nodeTypeString>
+            </hudson.plugins.plot.XMLSeries>
+          </series>
+          <group>startup_time_measurement_MAIN</group>
+          <numBuilds />
+          <csvFileName>35234559.csv</csvFileName>
+          <csvLastModification>0</csvLastModification>
+          <style>line</style>
+          <useDescr>false</useDescr>
+          <keepRecords>false</keepRecords>
+          <exclZero>false</exclZero>
+          <logarithmic>false</logarithmic>
+        </hudson.plugins.plot.Plot>
+      </plots>
+    </hudson.plugins.plot.PlotPublisher>
+    <hudson.plugins.robot.RobotPublisher plugin="robot@1.6.4">
+      <outputPath>testdir/results</outputPath>
+      <reportFileName>report.html</reportFileName>
+      <logFileName>log.html</logFileName>
+      <outputFileName>output.xml</outputFileName>
+      <disableArchiveOutput>false</disableArchiveOutput>
+      <passThreshold>100.0</passThreshold>
+      <unstableThreshold>75.0</unstableThreshold>
+      <otherFiles>
+        <string />
+      </otherFiles>
+      <enableCache>true</enableCache>
+      <onlyCritical>true</onlyCritical>
+    </hudson.plugins.robot.RobotPublisher>
+    <hudson.tasks.Fingerprinter>
+      <targets>ECL_revision_info.txt</targets>
+    </hudson.tasks.Fingerprinter>
+    <hudson.plugins.descriptionsetter.DescriptionSetterPublisher plugin="description-setter@1.10">
+      <regexp />
+      <regexpForFailed />
+      <description>$ECL_REVISION</description>
+      <setForMatrix>false</setForMatrix>
+    </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
+    <hudson.tasks.Mailer plugin="mailer@1.17">
+      <recipients>I_MBB_SM_PS_CI_HZ@internal.nsn.com</recipients>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>false</sendToIndividuals>
+    </hudson.tasks.Mailer>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.29">
+      <deleteDirs>false</deleteDirs>
+      <cleanupParameter />
+      <externalDelete />
+    </hudson.plugins.ws__cleanup.PreBuildCleanup>
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.16-INTEL-1">
+      <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
+        <timeoutMinutes>180</timeoutMinutes>
+      </strategy>
+      <operationList />
+    </hudson.plugins.build__timeout.BuildTimeoutWrapper>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.3" />
+  </buildWrappers>
+</project>

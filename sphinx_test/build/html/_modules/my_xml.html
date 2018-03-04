@@ -1,0 +1,226 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>my_xml &#8212; sptt 1.1.1 文档</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>my_xml 源代码</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># @Date    : 2017-03-10 11:20:20</span>
+<span class="c1"># @Author  : robin (robin.zhu@nokia.com)</span>
+<span class="c1"># @Description : </span>
+
+<span class="kn">from</span> <span class="nn">xml.etree</span> <span class="k">import</span> <span class="n">ElementTree</span> <span class="k">as</span> <span class="n">ET</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">path</span> <span class="k">as</span> <span class="n">PT</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">shutil</span>
+
+<span class="k">def</span> <span class="nf">return_file_context</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+			
+<span class="k">def</span> <span class="nf">return_file_contexts</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">fp</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">save_into_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">context</span><span class="p">):</span>
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+		<span class="n">fp</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+
+<div class="viewcode-block" id="move_file"><a class="viewcode-back" href="../index.html#my_xml.move_file">[文档]</a><span class="k">def</span> <span class="nf">move_file</span><span class="p">(</span><span class="n">src_path</span><span class="p">,</span><span class="n">dst_path</span><span class="p">,</span><span class="n">filter_string</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	move_file(&quot;D:\\test_ccs\\MAINBRANCH_LRC&quot;,&quot;D:\\test_ccs\\MAINBRANCH_LRC\\shell&quot;,&quot;.sh&quot;)</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">PT</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dst_path</span><span class="p">):</span>
+		<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dst_path</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">root</span><span class="p">,</span><span class="n">dirs</span><span class="p">,</span><span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">src_path</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">filter_string</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+				<span class="n">src_file</span> <span class="o">=</span> <span class="n">PT</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span><span class="n">file</span><span class="p">)</span> 
+				<span class="n">dst_file</span> <span class="o">=</span> <span class="n">PT</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dst_path</span><span class="p">,</span><span class="n">file</span><span class="p">)</span> 
+				<span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">src_file</span><span class="p">,</span><span class="n">dst_file</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">get_shells</span><span class="p">(</span><span class="n">xml_file</span><span class="p">):</span>
+	<span class="n">file_path</span><span class="p">,</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">PT</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">xml_file</span><span class="p">)</span>
+	<span class="n">shell_path</span> <span class="o">=</span> <span class="n">PT</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span><span class="s2">&quot;shell&quot;</span><span class="p">)</span>
+	<span class="n">shell_files</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+		<span class="n">shell_name</span> <span class="o">=</span><span class="n">file_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span><span class="s2">&quot;.sh&quot;</span>
+		<span class="n">shell_file</span> <span class="o">=</span> <span class="n">PT</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">shell_path</span><span class="p">,</span><span class="n">shell_name</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">PT</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">shell_file</span><span class="p">):</span>
+			<span class="n">shell_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shell_file</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">break</span>
+	<span class="k">return</span> <span class="n">shell_files</span>
+
+<div class="viewcode-block" id="XML_FCT"><a class="viewcode-back" href="../index.html#my_xml.XML_FCT">[文档]</a><span class="k">class</span> <span class="nc">XML_FCT</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;factory of processing XML&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xmlname</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">xmlname</span> <span class="o">=</span> <span class="n">xmlname</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">xmlname</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+		
+	<span class="k">def</span> <span class="nf">get_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">element_name</span><span class="p">):</span>
+		<span class="n">command_elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="n">element_name</span><span class="p">)]</span>
+		<span class="k">return</span> <span class="n">command_elements</span>
+
+	<span class="k">def</span> <span class="nf">save_xml_shell</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_elements</span><span class="p">(</span><span class="s2">&quot;command&quot;</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">index</span><span class="p">,</span><span class="n">ce</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">elements</span><span class="p">):</span>
+			<span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmlname</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.sh&quot;</span> 
+			<span class="n">save_into_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">ce</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">modify_xml_build_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">node_name</span><span class="p">):</span>
+		<span class="n">elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_elements</span><span class="p">(</span><span class="s2">&quot;assignedNode&quot;</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">index</span><span class="p">,</span><span class="n">ce</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">elements</span><span class="p">):</span>
+			<span class="c1">#print &quot;change node {0} in {1}&quot;.format(index,self.xmlname)</span>
+			<span class="n">ce</span><span class="o">.</span><span class="n">text</span><span class="o">=</span><span class="n">node_name</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xmlname</span><span class="p">)</span>
+
+<div class="viewcode-block" id="XML_FCT.modify_xml_shell"><a class="viewcode-back" href="../index.html#my_xml.XML_FCT.modify_xml_shell">[文档]</a>	<span class="k">def</span> <span class="nf">modify_xml_shell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">shell_files</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">		shell_files: list of file</span>
+<span class="sd">		&#39;&#39;&#39;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_elements</span><span class="p">(</span><span class="s2">&quot;command&quot;</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">index</span><span class="p">,</span><span class="n">ce</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">elements</span><span class="p">):</span>
+				<span class="c1">#print &quot;change shell script {0} in {1}&quot;.format(index,self.xmlname)</span>
+				<span class="n">ce</span><span class="o">.</span><span class="n">text</span><span class="o">=</span><span class="n">return_file_context</span><span class="p">(</span><span class="n">shell_files</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xmlname</span><span class="p">)</span>
+		<span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+			<span class="nb">print</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> has more command part than local shells &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xmlname</span><span class="p">)</span></div>
+			
+	<span class="k">def</span> <span class="nf">modify_a_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">new_scripts</span> <span class="o">=</span> <span class="n">get_shells</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xmlname</span><span class="p">)</span>
+		<span class="nb">print</span> <span class="s2">&quot;modify xml file at </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xmlname</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">modify_xml_shell</span><span class="p">(</span><span class="n">new_scripts</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">modify_xml_build_node</span><span class="p">(</span><span class="s2">&quot;build&quot;</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">replace_a_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">original</span><span class="p">,</span><span class="n">present</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">iter</span><span class="p">():</span>
+			<span class="k">if</span> <span class="n">element</span><span class="o">.</span><span class="n">text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">original</span> <span class="ow">in</span> <span class="n">element</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+				<span class="c1">#print element,self.xmlname</span>
+				<span class="n">element</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">original</span><span class="p">,</span><span class="n">present</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xmlname</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">add_email</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">email_address</span><span class="o">=</span><span class="s2">&quot;I_MN_P_BBP_SCM_HZ_PS@internal.nsn.com&quot;</span><span class="p">):</span>
+		<span class="n">mail_element</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;hudson.tasks.Mailer&quot;</span><span class="p">)</span>
+		<span class="n">mail_element</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;plugin&quot;</span><span class="p">,</span><span class="s2">&quot;mailer@1.17&quot;</span><span class="p">)</span>
+		<span class="n">a_element</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;recipients&quot;</span><span class="p">)</span>
+		<span class="n">a_element</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">email_address</span>
+		<span class="n">b_element</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;dontNotifyEveryUnstableBuild&quot;</span><span class="p">)</span>
+		<span class="n">b_element</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;false&#39;</span>
+		<span class="n">c_element</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;sendToIndividuals&quot;</span><span class="p">)</span>
+		<span class="n">c_element</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;false&#39;</span>
+		<span class="n">mail_element</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a_element</span><span class="p">)</span>
+		<span class="n">mail_element</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b_element</span><span class="p">)</span>
+		<span class="n">mail_element</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c_element</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">iterfind</span><span class="p">(</span><span class="s2">&quot;publishers&quot;</span><span class="p">):</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">element</span><span class="o">.</span><span class="n">iterfind</span><span class="p">(</span><span class="s2">&quot;Mailer&quot;</span><span class="p">):</span>
+				<span class="n">element</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mail_element</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xmlname</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">get_sub_build_projects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">element</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">get_elements</span><span class="p">(</span><span class="s2">&quot;builders&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span> <span class="n">i</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span> <span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span>  <span class="n">element</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="s2">&quot;projects&quot;</span><span class="p">)])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]:</span>
+			<span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">return</span> <span class="n">result</span>
+
+	<span class="k">def</span> <span class="nf">get_scm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_elements</span><span class="p">(</span><span class="s2">&quot;scm&quot;</span><span class="p">):</span>
+			<span class="k">return</span> <span class="p">[</span> <span class="n">i</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">element</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="s2">&quot;remote&quot;</span><span class="p">)]</span></div>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+	
+	<span class="n">op</span> <span class="o">=</span> <span class="n">XML_FCT</span><span class="p">(</span><span class="s2">&quot;job_config_file&quot;</span><span class="p">)</span>
+	<span class="c1"># print op.root.getchildren()</span>
+	<span class="n">aa</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">get_sub_build_projects</span><span class="p">()</span>
+	<span class="nb">print</span> <span class="n">aa</span>
+	<span class="nb">print</span> <span class="n">return_file_context</span><span class="p">(</span><span class="s2">&quot;D:</span><span class="se">\\</span><span class="s2">userdata</span><span class="se">\\</span><span class="s2">myselfname</span><span class="se">\\</span><span class="s2">Desktop</span><span class="se">\\</span><span class="s2">work_script</span><span class="se">\\</span><span class="s2">jenkins_job_config</span><span class="se">\\</span><span class="s2">hwapi</span><span class="se">\\</span><span class="s2">HWAPI_LRC</span><span class="se">\\</span><span class="s2">view</span><span class="se">\\</span><span class="s2">FBLRC1613</span><span class="se">\\</span><span class="s2">PS_Release_Promo_FBLRC1613__MCU_TEST_ACCEPTED.xml&quot;</span><span class="p">)</span>
+	<span class="c1"># print op.get_sub_build_projects()</span>
+	<span class="c1"># for element in  op.get_elements(&quot;builders&quot;):</span>
+	<span class="c1"># 	print element</span>
+	<span class="c1"># 	print [i for i in element.iter(&quot;projects&quot;)]</span>
+		<span class="c1"># print element.getchildren()[1].getchildren()[0].getchildren()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">模块代码</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>快速搜索</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="转向" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, robin.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

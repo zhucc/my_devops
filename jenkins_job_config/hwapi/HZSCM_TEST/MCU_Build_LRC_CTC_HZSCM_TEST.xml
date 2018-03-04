@@ -1,0 +1,464 @@
+<project>
+  <actions />
+  <description>Cobertura coverage is still preliminary version
+</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.security.AuthorizationMatrixProperty>
+      <permission>hudson.model.Item.Build:teikinnu</permission>
+      <permission>hudson.model.Item.Build:tevuoti</permission>
+      <permission>hudson.model.Item.Cancel:teikinnu</permission>
+      <permission>hudson.model.Item.Workspace:teikinnu</permission>
+      <permission>hudson.model.Item.Workspace:tevuoti</permission>
+      <permission>hudson.model.Item.Configure:teikinnu</permission>
+      <permission>hudson.model.Item.Configure:tevuoti</permission>
+    </hudson.security.AuthorizationMatrixProperty>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>-1</numToKeep>
+        <artifactDaysToKeep>7</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    <com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty plugin="build-failure-analyzer@1.15.0">
+      <doNotScan>false</doNotScan>
+    </com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty>
+    <com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty plugin="naginator@1.17.1">
+      <optOut>false</optOut>
+    </com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>branch</name>
+          <description />
+          <defaultValue>HZSCM_TEST</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+      <maxConcurrentPerNode>0</maxConcurrentPerNode>
+      <maxConcurrentTotal>0</maxConcurrentTotal>
+      <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+      <throttleEnabled>false</throttleEnabled>
+      <throttleOption>project</throttleOption>
+      <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+      <paramsToUseForLimit />
+    </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM" />
+  <assignedNode>build</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <hudson.triggers.TimerTrigger>
+      <spec>H 5 * * *</spec>
+    </hudson.triggers.TimerTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.plugins.copyartifact.CopyArtifact plugin="copyartifact@1.38">
+      <project>PS_Release_Promo_HZSCM_TEST</project>
+      <filter />
+      <target />
+      <excludes />
+      <selector class="hudson.plugins.copyartifact.StatusBuildSelector" />
+      <doNotFingerprintArtifacts>false</doNotFingerprintArtifacts>
+    </hudson.plugins.copyartifact.CopyArtifact>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+cat /etc/redhat-release | grep -q -i "release 6"
+if [ "$?" == "0" ]; then
+  echo "- - - - - R H E L 6 - - - - -"
+  RHEL=6
+else
+  echo "- - - - - R H E L 5 - - - - -"
+  RHEL=5
+fi
+
+# ---- Tools ---- #
+if [ $RHEL == 6 ]; then
+  if [ -d /etc/eecloud ]; then
+    echo "- - - - - cloud - - - - -"
+    source /opt/gcc/x86_64/4.7.3/interface/startup/linsee.env || exit 1
+    source /opt/ctc++/x86_64/7.3.1/interface/startup/linsee.env
+    source /opt/cmake/x86_64/2.8.7-3/interface/startup/linsee.env
+    temp=$LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH=/opt/gcc/x86_64/4.7.2-3/lib:/opt/gcc/x86_64/4.7.2-3/lib64:$temp || exit 1
+    gcc --version
+  else
+    echo "- - - - - linsee - - - - -"
+    #source /opt/gcc/x86_64/4.7.3/interface/startup/linsee.env || exit 1
+    source /opt/ctc++/x86_64/7.3.1/interface/startup/linsee.env || exit 1
+    source /opt/cmake/x86_64/2.8.7-3/interface/startup/linsee.env
+    gcc --version
+  fi
+  #source /opt/boost/x86_64/1.55.0-1/interface/startup/linsee.env
+  #export INCLUDE_DIR=$BOOST_HOME/include
+else
+  echo "- Rhel5 not supported anymore! "
+fi
+
+svn export https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/branches/ps_rel_ci/jenkins/scripts_lrc/MCUbuild_LRC.sh
+
+MCUsvn=$(sed -n 's/ECL_MCUHWAPI=\(.*\)/\1/p' ECL)
+MCUrev=$(sed -n 's/ECL_MCUHWAPI=.*@\(.*\)/\1/p' ECL)
+
+export branch=HZSCM_TEST
+export NOT_USE_ECLOUD=YES
+export APP_SW="BTS_SC_MCUHWAPI_HZSCM_TEST-trunk@$MCUrev-ctc"
+
+svn info https://svne1.access.nsn.com/isource/svnroot/LRC_SC_MCUHWAPI/HZSCM_TEST/trunk@$MCUrev &gt; MCU_revision_info.txt
+svn co --ignore-externals https://svne1.access.nsn.com/isource/svnroot/LRC_SC_MCUHWAPI/HZSCM_TEST/trunk@$MCUrev MCU_trunk &gt; svn_log.log
+
+pushd MCU_trunk
+python ECL.py &amp;&gt; eclpy.log
+popd
+
+ctc -V
+
+export VERBOSE=yes
+
+#./MCUbuild_FSM_REL3.sh
+#./MCUbuild_LRC.sh LCP
+
+export OM_CMAKE_EXTRAS="-DCTC=yes"
+make -C MCU_trunk/HWR/ BUILD_OM TGT=LINUX_OCTEON2 TGT_UNIT=LCP || exit 1
+
+echo "##################### SYM FILES OM_LCP ##########################"
+symfiles=$(find . -iname "*.sym" -not -path "*symfiles*")
+mkdir -p symfiles/OM_LCP
+mv $symfiles symfiles/OM_LCP
+echo "#################################################################"
+#unset USE_CTC
+#unset OM_CMAKE_EXTRAS
+
+make -C MCU_trunk/HWR/ BUILD_OM TGT=LINUX_ARM_LSI TGT_UNIT=LSP_AXM || exit 1
+echo "##################### SYM FILES OM_LSP_AXM ######################"
+symfiles=$(find . -iname "*.sym" -not -path "*symfiles*")
+mkdir -p symfiles/OM_LSP_AXM
+mv $symfiles symfiles/OM_LSP_AXM
+echo "#################################################################"
+
+unset OM_CMAKE_EXTRAS
+export USE_CTC=yes
+make -C MCU_trunk/HWR/ LCP_AHP LINUX_OCTEON2 || exit 1
+echo "##################### SYM FILES LCP_AHP #########################"
+symfiles=$(find . -iname "*.sym" -not -path "*symfiles*")
+mkdir -p symfiles/LCP_AHP
+mv $symfiles symfiles/LCP_AHP
+echo "#################################################################"
+
+make -C MCU_trunk/HWR/ LCP_SHP LINUX_OCTEON2 || exit 1
+echo "##################### SYM FILES LCP_SHP #########################"
+symfiles=$(find . -iname "*.sym" -not -path "*symfiles*")
+mkdir -p symfiles/LCP_SHP
+mv $symfiles symfiles/LCP_SHP
+echo "#################################################################"
+
+#export USE_CTC=no
+make -C MCU_trunk/HWR/ LSP_AXM LINUX_ARM_LSI || exit 1
+echo "##################### SYM FILES LSP_AXM #########################"
+symfiles=$(find . -iname "*.sym" -not -path "*symfiles*")
+mkdir -p symfiles/LSP_AXM
+mv $symfiles symfiles/LSP_AXM
+echo "#################################################################"
+
+
+if [ "$?" -ne "0" ]; then
+   echo -ne "\nFSM_REL3 compilation returned an exit code\n"   
+   exit 1
+fi
+
+echo http://10.140.19.16:8080/job/$JOB_NAME/builds/$BUILD_NUMBER/log &gt; logurl.txt
+
+rm -f artifacts.zip
+zip -qr artifacts.zip MCU_revision_info.txt MCU_trunk/exe/* MCU_trunk/CCS_Services/lib/LINUX_NATIVE/libCCS.so MCU_trunk/CCS_Daemon/exe/LINUX_NATIVE/CCSDaemonExe MCU_trunk/HWR/lib/* MCU_trunk/emake.xml MCU_trunk/PS_Tools/StripWatcher/* logurl.txt MCU_trunk/Tbts/exe/LINUX_OCTEON2/FCT/* MCU_trunk/HWR/exe/LINUX_OCTEON2/FCT/ClSim.tgz MCU_trunk/build /python/* MCU_trunk/build/common_tests/* MCU_trunk/C_Platform/MCUHWAPI/FEP/LRC/*
+
+#Make a parameter file
+echo PARENT_PROJECT=$JOB_NAME &gt; param_file
+echo ECL_REVISION=$(sed -n 's/Last Changed Rev:\s*\(.*\)/\1/p' ECL_revision_info.txt) &gt;&gt; param_file
+#echo ECL_REVISION=$ECL_REVISION &gt;&gt; param_file
+echo CODE_COVERAGE=true &gt;&gt; param_file
+
+echo "##### Creating LSP FEPs #####"
+svn export https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/branches/ps_rel_ci/jenkins/scripts_lrc/do_fep.sh
+export ECL_REVISION=$(sed -n 's/Last Changed Rev:\s*\(.*\)/\1/p' ECL_revision_info.txt)
+./do_fep.sh -b $branch -e $ECL_REVISION -x MCU_trunk/exe/LINUX_ARM_LSI/LSP_AXM/hwr.tgz
+
+mv LSP____OS_E0000.FEP NSN-LSP-OS
+mv LSP____LT_E0000.FEP NSN-LTE-DSP</command>
+    </hudson.tasks.Shell>
+    <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder plugin="conditional-buildstep@1.3.3">
+      <condition class="org.jenkins_ci.plugins.run_condition.core.AlwaysRun" plugin="run-condition@1.0" />
+      <buildStep class="hudson.plugins.parameterizedtrigger.TriggerBuilder" plugin="parameterized-trigger@2.30">
+        <configs>
+          <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+            <configs>
+              <hudson.plugins.parameterizedtrigger.FileBuildParameters>
+                <propertiesFile>param_file</propertiesFile>
+                <failTriggerOnMissing>false</failTriggerOnMissing>
+                <useMatrixChild>false</useMatrixChild>
+                <onlyExactRuns>false</onlyExactRuns>
+              </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+            </configs>
+            <projects>PS_ReleaseTest_MCU_LRC_HZSCM_TEST</projects>
+            <condition>ALWAYS</condition>
+            <triggerWithNoParameters>false</triggerWithNoParameters>
+            <block />
+            <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+          </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+        </configs>
+      </buildStep>
+      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0" />
+    </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
+    <hudson.plugins.copyartifact.CopyArtifact plugin="copyartifact@1.38">
+      <project>PS_ReleaseTest_MCU_LRC_HZSCM_TEST</project>
+      <filter>ctc_data*/*</filter>
+      <target />
+      <excludes />
+      <selector class="hudson.plugins.copyartifact.SpecificBuildSelector">
+        <buildNumber>${TRIGGERED_BUILD_NUMBER_PS_ReleaseTest_MCU_LRC_HZSCM_TEST}</buildNumber>
+      </selector>
+      <doNotFingerprintArtifacts>false</doNotFingerprintArtifacts>
+    </hudson.plugins.copyartifact.CopyArtifact>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+# ---- Tools ---- #
+unset PYTHON_VERSION
+unset CTC_VERSION
+source /opt/python/x86_64/2.7.3/interface/startup/linsee.env &amp;&gt; /dev/null
+source /opt/ctc++/x86_64/7.3.1/interface/startup/linsee.env &amp;&gt; /dev/null
+
+	
+#****************************#
+# ---- Get ctc2cob tool ---- #
+svn export https://svne1.access.nsn.com/isource/svnroot/BTS_SCM_PS/branches/ps_rel_ci/jenkins/scripts/ctc2cob
+
+echo "# ---- Get results testcase by testcase ---- #"
+
+echo "***"
+list_of_tgz=$(find label*/ctc_data_*/ -maxdepth 1 -iname "testcase_ctc*.tgz")
+echo "$list_of_tgz"
+WORKSPACE=$(pwd)
+echo "workspace: ${WORKSPACE}"
+
+#for zipfile in $list_of_tgz
+#do 
+    # ---- Unzip testcase.tgz files ---- #
+    #testfilename=$(echo $zipfile | awk 'BEGIN {FS="/"} ; {print $3}' | awk 'BEGIN {FS="."} ; {print $2, $3}' | awk '{ sub(/ /, "_"); print }')
+    #target_env=$(echo $zipfile | awk 'BEGIN {FS="/"} ; {print $1}' | awk 'BEGIN {FS="="} ; {print $2}')
+    
+    #new_name="${target_env}_${testfilename}"
+    
+    #echo "Test suite: ${new_name}"
+
+    #if [ ! -e ${new_name} ]
+    #then
+    #    echo "***"
+    #    echo "Creating folder: ${new_name}"
+    #    mkdir ${new_name}
+    #    echo "***"
+    #fi
+    #cd ${WORKSPACE}/${new_name}
+
+    #echo "Curren folder: $PWD"
+    #echo "Extracting ${WORKSPACE}/$zipfile"
+    #tar -xzf ${WORKSPACE}/$zipfile --strip=3
+
+    #echo "Running ctc2dat on extracted files"
+    #for f in $(find . -maxdepth 1 -iname "ctc_*.txt")
+    #do
+        # get .dat files
+    #    dat=$(echo $f | sed -n 's/.txt/.dat/p')
+    #    ctc2dat -i $f -o $dat &gt;&gt; ${WORKSPACE}/ctc2dat.log
+    #    if [ $? -ne 0 ] ;then
+    #        echo "Problems with $f --&gt; $dat"
+    #    fi
+    #done
+
+    #cd ${WORKSPACE}
+    #echo ""
+#done
+
+targets=$(find . -maxdepth 1 -type d -name "label=*")
+for target in $targets
+do
+        pushd $target
+        ips=$(find . -maxdepth 1 -type d -name "*192.168.255*")
+        for ip in $ips
+        do
+                pushd $ip
+                echo "folderi: $(pwd)"
+                zipfiles=$(find . -maxdepth 1 -iname "testcase_ctc*.tgz")
+                for zipfile in $zipfiles
+                do
+                        mkdir -p $(pwd)/${zipfile}_extracted
+                        tar -xzf ${zipfile} --strip=3 -C $(pwd)/${zipfile}_extracted
+                        for f in $(find $(pwd)/${zipfile}_extracted -maxdepth 1 -iname "ctc_*.txt")
+					    do
+           					dat=$(echo $f | sed -n 's/.txt/.dat/p')
+        					ctc2dat -i $f -o $dat &gt;&gt; ${WORKSPACE}/ctc2dat.log
+        					if [ $? -ne 0 ] ;then
+            					echo "Problems with $f --&gt; $dat"
+        					fi
+    						done
+                done
+                popd
+        done
+        popd
+done
+
+
+echo "xml and profile files for all files"
+datfiles=$(find . -iname "ctc*.dat")
+#symfiles=$(find . -iname "*.sym")
+symfiles=$(find ./symfiles/ -iname "*.sym" -not -path "*symfiles/LSP_AXM/*")
+
+echo "List of dat files"
+echo $datfiles
+
+echo "List of sym files"
+echo $symfiles
+
+ctcpost $symfiles $datfiles -p ctc_all.profile -x ctc_all.xml
+
+tar -czf LRC_CTC_data.tgz $symfiles $datfiles
+
+echo "CTC to cobertura"
+./ctc2cob ctc_all.xml sct_lrc_coverage_all.xml -r ${WORKSPACE}/MCU_trunk/ -s MCU_trunk/
+echo "CTC to Cobertura: $?"
+
+echo "CTC HTML report"
+ctc2html -i ctc_all.profile
+
+echo "***"
+
+
+
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>sct_lrc_coverage*.xml,ctc_all.xml,LRC_CTC_data.tgz</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>true</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.plugins.cobertura.CoberturaPublisher plugin="cobertura@1.9.8">
+      <coberturaReportFile>sct_lrc_coverage*.xml</coberturaReportFile>
+      <onlyStable>false</onlyStable>
+      <failUnhealthy>false</failUnhealthy>
+      <failUnstable>false</failUnstable>
+      <autoUpdateHealth>true</autoUpdateHealth>
+      <autoUpdateStability>true</autoUpdateStability>
+      <zoomCoverageChart>false</zoomCoverageChart>
+      <maxNumberOfBuilds>0</maxNumberOfBuilds>
+      <failNoReports>false</failNoReports>
+      <healthyTarget>
+        <targets class="enum-map" enum-type="hudson.plugins.cobertura.targets.CoverageMetric">
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>PACKAGES</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>9000000</int>
+          </entry>
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>CLASSES</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>8000000</int>
+          </entry>
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>METHOD</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>5000000</int>
+          </entry>
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>LINE</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>3000000</int>
+          </entry>
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>CONDITIONAL</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>6000000</int>
+          </entry>
+        </targets>
+      </healthyTarget>
+      <unhealthyTarget>
+        <targets class="enum-map" enum-type="hudson.plugins.cobertura.targets.CoverageMetric">
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>PACKAGES</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>9245000</int>
+          </entry>
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>CLASSES</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>8935000</int>
+          </entry>
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>METHOD</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>5807000</int>
+          </entry>
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>LINE</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>5422000</int>
+          </entry>
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>CONDITIONAL</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>6197000</int>
+          </entry>
+        </targets>
+      </unhealthyTarget>
+      <failingTarget>
+        <targets class="enum-map" enum-type="hudson.plugins.cobertura.targets.CoverageMetric">
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>PACKAGES</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>9245000</int>
+          </entry>
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>CLASSES</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>8935000</int>
+          </entry>
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>METHOD</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>5807000</int>
+          </entry>
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>LINE</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>5422000</int>
+          </entry>
+          <entry>
+            <hudson.plugins.cobertura.targets.CoverageMetric>CONDITIONAL</hudson.plugins.cobertura.targets.CoverageMetric>
+            <int>6197000</int>
+          </entry>
+        </targets>
+      </failingTarget>
+      <sourceEncoding>ASCII</sourceEncoding>
+    </hudson.plugins.cobertura.CoberturaPublisher>
+    <htmlpublisher.HtmlPublisher plugin="htmlpublisher@1.11">
+      <reportTargets>
+        <htmlpublisher.HtmlPublisherTarget>
+          <reportName>CTC++ Code Coverage</reportName>
+          <reportDir>CTCHTML</reportDir>
+          <reportFiles>index.html</reportFiles>
+          <alwaysLinkToLastBuild>false</alwaysLinkToLastBuild>
+          <keepAll>false</keepAll>
+          <allowMissing>false</allowMissing>
+        </htmlpublisher.HtmlPublisherTarget>
+      </reportTargets>
+    </htmlpublisher.HtmlPublisher>
+    <hudson.plugins.descriptionsetter.DescriptionSetterPublisher plugin="description-setter@1.10">
+      <regexp>^Description: (.*)</regexp>
+      <regexpForFailed />
+      <setForMatrix>false</setForMatrix>
+    </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.3" />
+  </buildWrappers>
+</project>
