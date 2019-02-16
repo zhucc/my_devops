@@ -1,0 +1,19 @@
+[alias]
+    bra = branch -a
+    co = checkout
+    ss = status
+    cm = commit --no-verify -m
+    cma = commit --amend
+    df = diff
+    lg1 = log -n1
+    lg = log --oneline --graph
+    fca = fetch --all
+    rsom = reset --hard origin/master
+    rsoz = reset --hard origin/dev_of_zhuhua
+    ptm = push origin HEAD:master
+    ptzh = push origin HEAD:dev_of_zhuhua
+    ptst = push origin HEAD:stable_test
+    rboz = pull origin --rebase dev_of_zhuhua
+    rbom = pull origin --rebase  master
+    clr = checkout --
+
